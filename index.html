@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FARMATODO · GESTIÓN DE EQUIPOS</title>
+<title>FARMATODO · MANTENIMIENTOS DE EQUIPOS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -232,6 +233,31 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 @keyframes loadAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
 .loading-msg{font-size:10px;color:rgba(255,255,255,.4);font-weight:500;}
 
+/* ── LOGIN SCREEN ── */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--ftd-navy) 0%,#001333 100%);z-index:9998;display:none;align-items:center;justify-content:center;}
+#loginScreen.show{display:flex;}
+#loginScreen::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);background-size:32px 32px;pointer-events:none;}
+.login-card{background:#fff;border-radius:16px;padding:44px 40px;width:440px;max-width:92vw;box-shadow:0 30px 80px rgba(0,10,30,.5);position:relative;z-index:1;text-align:center;}
+.login-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:8px;}
+.login-isotipo{width:56px;height:56px;background:var(--ftd-navy);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.login-isotipo svg{width:44px;height:44px;}
+.login-title{font-weight:800;font-size:22px;letter-spacing:2px;color:var(--ftd-navy);}
+.login-subtitle{font-size:11px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:-8px;}
+.login-desc{font-size:12px;color:var(--text2);font-weight:500;margin:22px 0 26px;line-height:1.6;}
+.login-badge{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:22px;text-align:left;}
+.login-badge-icon{width:18px;height:18px;flex-shrink:0;color:var(--ftd-blue);}
+#googleBtnContainer{display:flex;justify-content:center;margin-bottom:18px;}
+.login-footer-note{font-size:10px;color:var(--muted);font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;}
+.login-footer-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.login-error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);font-size:11px;font-weight:600;padding:12px 14px;border-radius:8px;margin-bottom:18px;display:none;text-align:left;}
+.login-error.show{display:block;}
+.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px 4px 4px;}
+.user-chip-avatar{width:22px;height:22px;border-radius:50%;background:var(--ftd-blue);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.user-chip-avatar img{width:100%;height:100%;object-fit:cover;}
+.user-chip-name{font-size:10px;font-weight:600;color:#fff;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:13px;padding:0 4px;transition:color .15s;}
+.logout-btn:hover{color:#fff;}
+
 @media(max-width:1100px){.main{grid-template-columns:1fr;}.stats-bar{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.stats-bar{grid-template-columns:repeat(2,1fr);}.header-center{display:none;}}
 </style>
@@ -240,9 +266,39 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 
 <div id="loadingScreen">
   <div class="loading-logo"><span>FARMA</span>TODO</div>
-  <div style="font-size:9px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,.4)">GESTIÓN DE EQUIPOS</div>
+  <div style="font-size:9px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,.4)">MANTENIMIENTOS DE EQUIPOS</div>
   <div class="loading-bar-bg"><div class="loading-bar"></div></div>
-  <div class="loading-msg" id="loadingMsg">Conectando con Google Sheets...</div>
+  <div class="loading-msg" id="loadingMsg">Verificando sesión...</div>
+</div>
+
+<!-- ═══ LOGIN SCREEN ═══════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <div class="login-isotipo">
+        <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="26" height="26" fill="#002858"/>
+          <ellipse cx="9" cy="8.5" rx="4" ry="5.5" fill="white" transform="rotate(-30 9 8.5)"/>
+          <ellipse cx="17" cy="8.5" rx="4" ry="5.5" fill="white" transform="rotate(30 17 8.5)"/>
+          <ellipse cx="9" cy="18" rx="4" ry="5.5" fill="white" transform="rotate(30 9 18)"/>
+          <ellipse cx="17" cy="18" rx="4" ry="5.5" fill="white" transform="rotate(-30 17 18)"/>
+          <circle cx="13" cy="13" r="3" fill="#002858"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-title">FARMATODO</div>
+        <div class="login-subtitle">Mantenimientos de Equipos</div>
+      </div>
+    </div>
+    <p class="login-desc">Inicia sesión con tu cuenta corporativa para acceder al panel de mantenimiento de servidores, cajas, auto pagos y PC de gerencia.</p>
+    <div class="login-badge">
+      <svg class="login-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Autenticación segura vía Google Workspace SSO.</span>
+    </div>
+    <div id="loginError" class="login-error">⚠ Acceso restringido a cuentas @farmatodo.com</div>
+    <div id="googleBtnContainer"></div>
+    <div class="login-footer-note"><div class="login-footer-dot"></div>Solo cuentas @farmatodo.com</div>
+  </div>
 </div>
 
 <div id="alertContainer"></div>
@@ -261,7 +317,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     </div>
     <div>
       <div class="logo-name">FARMATODO</div>
-      <span class="logo-subtitle">GESTIÓN DE EQUIPOS</span>
+      <span class="logo-subtitle">MANTENIMIENTOS DE EQUIPOS</span>
     </div>
   </div>
   <div class="header-center">
@@ -270,6 +326,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     <button class="hdr-btn accent" onclick="openAddStoreModal()">+ Nueva Tienda</button>
   </div>
   <div class="header-right">
+    <div id="userChip" class="user-chip" style="display:none">
+      <div class="user-chip-avatar" id="userAvatar">?</div>
+      <span class="user-chip-name" id="userName"></span>
+      <button class="logout-btn" onclick="logout()" title="Cerrar sesión">⏻</button>
+    </div>
     <div id="connStatus" class="conn-status conn-loading"><div class="conn-dot"></div><span>Conectando...</span></div>
     <div class="live-badge"><div class="live-dot"></div>EN VIVO</div>
     <div id="clock"></div>
@@ -525,6 +586,101 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════════════
+// AUTENTICACIÓN GOOGLE
+// ══════════════════════════════════════════════════════════════════
+const GOOGLE_CLIENT_ID = '427512769872-r6f82ug916a4sgpnkm6ickeukc422thj.apps.googleusercontent.com';
+const ALLOWED_DOMAIN = 'farmatodo.com';
+let currentUser = JSON.parse(sessionStorage.getItem('ftd_user') || 'null');
+
+function parseJwt(token){
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g,'+').replace(/_/g,'/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(jsonPayload);
+  } catch(e){ return null; }
+}
+
+function handleCredentialResponse(response){
+  const payload = parseJwt(response.credential);
+  if(!payload){
+    showLoginError('Error al procesar la respuesta de Google.');
+    return;
+  }
+  const email = payload.email || '';
+  if(!email.toLowerCase().endsWith('@'+ALLOWED_DOMAIN)){
+    showLoginError(`⚠ Acceso restringido. Debes iniciar sesión con una cuenta @${ALLOWED_DOMAIN}. (${email})`);
+    return;
+  }
+  currentUser = { email, name: payload.name||email, picture: payload.picture||'', loginAt: new Date().toISOString() };
+  sessionStorage.setItem('ftd_user', JSON.stringify(currentUser));
+  hideLoginError();
+  enterApp();
+}
+
+function showLoginError(msg){
+  const el=document.getElementById('loginError');
+  el.textContent=msg;
+  el.classList.add('show');
+}
+function hideLoginError(){document.getElementById('loginError').classList.remove('show');}
+
+function logout(){
+  sessionStorage.removeItem('ftd_user');
+  currentUser=null;
+  location.reload();
+}
+
+function renderUserChip(){
+  if(!currentUser) return;
+  document.getElementById('userChip').style.display='flex';
+  document.getElementById('userName').textContent=currentUser.name.split(' ')[0]||currentUser.email;
+  const avatar=document.getElementById('userAvatar');
+  if(currentUser.picture){
+    avatar.innerHTML=`<img src="${currentUser.picture}" referrerpolicy="no-referrer" onerror="this.parentElement.textContent='${(currentUser.name||'?')[0].toUpperCase()}'">`;
+  } else {
+    avatar.textContent=(currentUser.name||currentUser.email||'?')[0].toUpperCase();
+  }
+}
+
+function initGoogleLogin(){
+  if(typeof google==='undefined'||!google.accounts){
+    setTimeout(initGoogleLogin,300);
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleCredentialResponse
+  });
+  google.accounts.id.renderButton(
+    document.getElementById('googleBtnContainer'),
+    { theme:'outline', size:'large', width:340, text:'continue_with', shape:'pill' }
+  );
+}
+
+function showLogin(){
+  document.getElementById('loadingScreen').style.display='none';
+  document.getElementById('loginScreen').classList.add('show');
+  initGoogleLogin();
+}
+
+function enterApp(){
+  document.getElementById('loginScreen').classList.remove('show');
+  document.getElementById('loadingScreen').style.display='flex';
+  document.getElementById('loadingMsg').textContent='Cargando datos...';
+  renderUserChip();
+  if(SCRIPT_URL){
+    document.getElementById('configBanner').style.display='none';
+    document.getElementById('scriptUrlInput').value=SCRIPT_URL;
+    loadData();
+  }else{
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('storesGrid').innerHTML='<div class="empty-state">⚙️ Configura la URL del Apps Script en el banner amarillo.</div>';
+    setConn('err','Sin configurar');
+  }
+}
+
 // ══════════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════════
@@ -1156,16 +1312,12 @@ ${equipos.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const st=equip
 // ── INIT ─────────────────────────────────────────────────────────
 document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModal(el.id);}));
 tick();setInterval(tick,1000);
-addLog('SISTEMA','FARMATODO GESTIÓN DE EQUIPOS iniciado','ok');
+addLog('SISTEMA','FARMATODO MANTENIMIENTOS DE EQUIPOS iniciado','ok');
 
-if(SCRIPT_URL){
-  document.getElementById('configBanner').style.display='none';
-  document.getElementById('scriptUrlInput').value=SCRIPT_URL;
-  loadData();
-}else{
-  document.getElementById('loadingScreen').style.display='none';
-  document.getElementById('storesGrid').innerHTML='<div class="empty-state">⚙️ Configura la URL del Apps Script en el banner amarillo.</div>';
-  setConn('err','Sin configurar');
+if(currentUser && currentUser.email && currentUser.email.toLowerCase().endsWith('@'+ALLOWED_DOMAIN)){
+  enterApp();
+} else {
+  showLogin();
 }
 </script>
 </body>
