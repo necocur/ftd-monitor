@@ -259,7 +259,28 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .logout-btn:hover{color:#fff;}
 
 @media(max-width:1100px){.main{grid-template-columns:1fr;}.stats-bar{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:600px){.stats-bar{grid-template-columns:repeat(2,1fr);}.header-center{display:none;}}
+@media(max-width:680px){
+  header{flex-wrap:wrap;height:auto;padding:10px 14px;row-gap:10px;}
+  .header-center{width:100%;order:3;justify-content:space-between;gap:6px;}
+  .hdr-btn{flex:1;justify-content:center;padding:9px 6px;font-size:9px;white-space:nowrap;}
+  .header-right{gap:8px;}
+  #clock{display:none;}
+  .stats-bar{grid-template-columns:repeat(2,1fr);}
+  .filter-wrap{flex-wrap:wrap;}
+  .search-wrap{width:100%;border-left:none;border-top:1px solid var(--border);}
+  .search-input{width:100%;}
+}
+@media(max-width:480px){
+  .stores-panel{padding:14px 12px;}
+  .stores-grid{grid-template-columns:1fr;}
+  .form-row,.form-row-3{grid-template-columns:1fr;}
+  .modal{padding:20px;}
+  .equipo-row{flex-wrap:wrap;}
+  .equipo-actions{width:100%;justify-content:flex-end;margin-top:8px;}
+  .equipo-tabs{overflow-x:auto;}
+  .login-card{padding:32px 22px;}
+  #googleBtnContainer > div{margin:0 auto;}
+}
 </style>
 </head>
 <body>
@@ -655,7 +676,7 @@ function initGoogleLogin(){
   });
   google.accounts.id.renderButton(
     document.getElementById('googleBtnContainer'),
-    { theme:'outline', size:'large', width:340, text:'continue_with', shape:'pill' }
+    { theme:'outline', size:'large', width:Math.min(340, window.innerWidth-100), text:'continue_with', shape:'pill' }
   );
 }
 
