@@ -936,6 +936,7 @@ function openEditEquipo(id){
   document.getElementById('eq-freq').value=eq.freq||90;
   document.getElementById('eq-estado').value=eq.estado||'ok';
   document.getElementById('eq-obs').value=eq.obs||'';
+  document.getElementById('deleteEquipoZone').style.display='block';
   closeModal('storeModal');
   openModal('equipoModal');
 }
