@@ -528,7 +528,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 // ══════════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════════
-let SCRIPT_URL = localStorage.getItem('ftd_script_url') || '';
+let SCRIPT_URL = localStorage.getItem('ftd_script_url') || 'https://script.google.com/macros/s/AKfycbyRvJKnBPsh6pcJwx8RvO8EdBkrcQ2K-oOEmk4FFLWymR3XqEtIgmW2mgQGeprZdsIw/exec';
 let stores  = [];   // [{storeNum, storeName, area, ciudad}]
 let equipos = [];   // [{id, storeNum, tipo, nombre, marca, modelo, serie, ip, lastMaint, freq, estado, obs}]
 let historial = []; // [{id, equipoId, fecha, tecnico, tipo, obs, proximoMaint, estado, registrado}]
@@ -936,7 +936,6 @@ function openEditEquipo(id){
   document.getElementById('eq-freq').value=eq.freq||90;
   document.getElementById('eq-estado').value=eq.estado||'ok';
   document.getElementById('eq-obs').value=eq.obs||'';
-  document.getElementById('deleteEquipoZone').style.display='block';
   closeModal('storeModal');
   openModal('equipoModal');
 }
