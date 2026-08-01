@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FARMATODO · SRV·MONITOR</title>
+<title>FARMATODO · GESTIÓN DE EQUIPOS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ftd-navy:#002858; --ftd-blue:#0084d0; --ftd-light:#e8f3fb; --ftd-white:#ffffff;
+  --ftd-navy:#002858; --ftd-blue:#0084d0; --ftd-white:#ffffff;
   --bg:#edf4fb; --surface:#ffffff; --surface2:#f4f8fd; --surface3:#e1edf8;
   --border:#ccdff0; --border2:#b3cfe5;
   --green:#00875a; --amber:#c47900; --red:#c0001a;
@@ -16,6 +16,10 @@
   --green-border:#a3d9c4; --amber-border:#f5c97a; --red-border:#f5a3ae;
   --text:#001e42; --text2:#3a5a7a; --muted:#7a9ab8;
   --sans:'Montserrat','Arial',sans-serif; --r:4px;
+  /* Tipo de equipo colores */
+  --srv:#0084d0; --caja:#00875a; --auto:#c47900; --ger:#7b3fa0;
+  --srv-bg:rgba(0,132,208,.08); --caja-bg:rgba(0,135,90,.08);
+  --auto-bg:rgba(196,121,0,.08); --ger-bg:rgba(123,63,160,.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;font-size:13px;}
@@ -24,53 +28,42 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
 /* ── HEADER ── */
-header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:var(--ftd-navy);border-bottom:3px solid var(--ftd-blue);position:sticky;top:0;z-index:200;gap:12px;box-shadow:0 2px 12px rgba(0,40,88,.18);}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:var(--ftd-navy);border-bottom:3px solid var(--ftd-blue);position:sticky;top:0;z-index:300;gap:12px;box-shadow:0 2px 12px rgba(0,40,88,.18);}
 .logo-wrap{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.logo-isotipo{width:32px;height:32px;flex-shrink:0;background:var(--ftd-white);border:2px solid var(--ftd-white);display:flex;align-items:center;justify-content:center;border-radius:3px;overflow:hidden;}
+.logo-isotipo{width:32px;height:32px;flex-shrink:0;background:#fff;border-radius:3px;display:flex;align-items:center;justify-content:center;}
 .logo-isotipo svg{width:26px;height:26px;}
-.logo-name{font-weight:800;font-size:20px;letter-spacing:3px;color:var(--ftd-white);}
-.logo-subtitle{font-size:9px;font-weight:500;letter-spacing:2.5px;color:rgba(255,255,255,.55);display:block;}
+.logo-name{font-weight:800;font-size:18px;letter-spacing:3px;color:#fff;}
+.logo-subtitle{font-size:9px;font-weight:500;letter-spacing:2px;color:rgba(255,255,255,.5);display:block;}
 .header-center{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;}
-.hdr-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.5px;padding:6px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;border-radius:var(--r);}
-.hdr-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.6);color:#fff;}
+.hdr-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);font-family:var(--sans);font-size:10px;font-weight:600;padding:6px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;border-radius:var(--r);}
+.hdr-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
 .hdr-btn.accent{background:var(--ftd-blue);border-color:var(--ftd-blue);color:#fff;}
-.hdr-btn.accent:hover{background:#006fb0;}
-.header-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
-.live-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:1px;color:#fff;}
+.header-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.conn-status{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.conn-ok{background:rgba(0,135,90,.2);color:#00e676;border:1px solid rgba(0,135,90,.4);}
+.conn-err{background:rgba(192,0,26,.2);color:#ff6b6b;border:1px solid rgba(192,0,26,.4);}
+.conn-loading{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2);}
+.conn-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;color:#fff;}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.4s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
-#clock{font-size:11px;color:rgba(255,255,255,.5);}
+#clock{font-size:11px;color:rgba(255,255,255,.4);}
 
 /* ── CONFIG BANNER ── */
 .config-banner{background:#fff8e6;border-bottom:2px solid #f5c97a;padding:10px 24px;display:flex;align-items:center;gap:10px;font-size:11px;font-weight:600;color:#7a4f00;}
-.config-banner a{color:var(--ftd-blue);cursor:pointer;text-decoration:underline;}
-.config-banner input{background:#fff;border:1px solid #f5c97a;padding:5px 10px;border-radius:var(--r);font-family:var(--sans);font-size:11px;font-weight:500;outline:none;width:380px;color:var(--text);}
-.config-banner input:focus{border-color:var(--ftd-blue);}
-.config-banner button{background:var(--ftd-navy);color:#fff;border:none;padding:5px 14px;border-radius:var(--r);font-family:var(--sans);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;}
-.config-banner button:hover{background:var(--ftd-blue);}
-
-/* ── CONNECTION STATUS ── */
-.conn-status{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;}
-.conn-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
-.conn-err{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
-.conn-loading{background:var(--surface3);color:var(--muted);border:1px solid var(--border);}
-.conn-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
-
-/* ── ALERTS ── */
-.alert-banner{padding:8px 24px;display:flex;align-items:center;gap:9px;font-size:11px;font-weight:600;}
-.alert-critical{background:var(--red-bg);border-bottom:1px solid var(--red-border);color:var(--red);}
-.alert-warning{background:var(--amber-bg);border-bottom:1px solid var(--amber-border);color:var(--amber);}
+.config-banner input{background:#fff;border:1px solid #f5c97a;padding:5px 10px;border-radius:var(--r);font-family:var(--sans);font-size:11px;outline:none;width:380px;color:var(--text);}
+.config-banner button{background:var(--ftd-navy);color:#fff;border:none;padding:5px 14px;border-radius:var(--r);font-family:var(--sans);font-size:10px;font-weight:700;cursor:pointer;}
 
 /* ── STATS BAR ── */
-.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border);background:var(--border);gap:1px;}
-.stat-item{background:var(--surface);padding:14px 20px;position:relative;overflow:hidden;}
+.stats-bar{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--border);background:var(--border);gap:1px;}
+.stat-item{background:var(--surface);padding:12px 16px;position:relative;overflow:hidden;}
 .stat-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--sc,transparent);}
-.stat-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.stat-value{font-size:28px;font-weight:900;line-height:1;color:var(--sc,var(--ftd-navy));}
-.stat-sub{font-size:9px;color:var(--muted);margin-top:3px;font-weight:500;}
+.stat-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.stat-value{font-size:24px;font-weight:900;line-height:1;color:var(--sc,var(--ftd-navy));}
+.stat-sub{font-size:8px;color:var(--muted);margin-top:2px;font-weight:500;}
 
-/* ── FILTER BAR ── */
-.filter-wrap{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;box-shadow:0 1px 4px rgba(0,40,88,.06);}
+/* ── FILTER + SEARCH ── */
+.filter-wrap{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;}
 .filter-bar{display:flex;align-items:center;flex:1;overflow-x:auto;padding:0 14px;}
 .filter-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);white-space:nowrap;padding:10px 14px 10px 0;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;}
 .filter-btn{background:transparent;border:none;color:var(--muted);font-family:var(--sans);font-size:10px;font-weight:600;padding:10px 12px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;flex-shrink:0;}
@@ -80,142 +73,174 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .filter-btn.active .filter-count{background:rgba(0,132,208,.12);color:var(--ftd-blue);}
 .alert-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 .search-wrap{padding:7px 16px;border-left:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:11px;font-weight:500;padding:6px 12px;outline:none;width:210px;transition:border-color .2s;border-radius:var(--r);}
-.search-input:focus{border-color:var(--ftd-blue);box-shadow:0 0 0 3px rgba(0,132,208,.1);}
-.search-input::placeholder{color:var(--muted);}
+.search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:11px;font-weight:500;padding:6px 12px;outline:none;width:200px;border-radius:var(--r);}
+.search-input:focus{border-color:var(--ftd-blue);}
 
-/* ── MAIN ── */
-.main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 230px);}
-.servers-panel{padding:20px 22px;border-right:1px solid var(--border);overflow-y:auto;}
+/* ── MAIN LAYOUT ── */
+.main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 220px);}
+.stores-panel{padding:20px 22px;border-right:1px solid var(--border);overflow-y:auto;}
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .panel-title{font-weight:700;font-size:9px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px;flex:1;}
 .panel-title::after{content:'';flex:1;height:1px;background:var(--border);}
-.active-badge{font-weight:700;font-size:9px;letter-spacing:1.5px;color:var(--ftd-blue);padding:3px 10px;border:1px solid rgba(0,132,208,.3);background:rgba(0,132,208,.06);margin-left:12px;white-space:nowrap;border-radius:20px;}
+.active-badge{font-weight:700;font-size:9px;letter-spacing:1px;color:var(--ftd-blue);padding:3px 10px;border:1px solid rgba(0,132,208,.3);background:rgba(0,132,208,.06);margin-left:12px;white-space:nowrap;border-radius:20px;}
 
-/* ── CITY GROUPS ── */
-.servers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;}
-.store-group-header{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:8px 0 4px;margin-top:8px;}
-.store-group-header:first-child{margin-top:0;}
-.store-group-label{font-weight:800;font-size:11px;letter-spacing:1.5px;color:var(--ftd-navy);text-transform:uppercase;}
-.store-group-line{flex:1;height:1px;background:var(--border);}
-.store-group-count{font-size:8px;color:var(--muted);font-weight:600;white-space:nowrap;background:var(--surface3);padding:2px 8px;border-radius:10px;}
+/* ── STORE CARD ── */
+.stores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.area-header{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:8px 0 4px;margin-top:8px;}
+.area-header:first-child{margin-top:0;}
+.area-label{font-weight:800;font-size:11px;letter-spacing:1.5px;color:var(--ftd-navy);text-transform:uppercase;}
+.area-line{flex:1;height:1px;background:var(--border);}
+.area-count{font-size:8px;color:var(--muted);font-weight:600;background:var(--surface3);padding:2px 8px;border-radius:10px;}
 
-/* ── SERVER CARD ── */
-.server-card{background:var(--surface);border:1px solid var(--border);padding:14px 16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;border-radius:var(--r);box-shadow:0 1px 4px rgba(0,40,88,.05);}
-.server-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sc,var(--green));}
-.server-card:hover{border-color:var(--sc,var(--green));background:var(--surface2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,40,88,.1);}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.server-name{font-weight:800;font-size:13px;color:var(--ftd-navy);}
-.server-meta{font-size:9px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
-.meta-tag{font-size:8px;font-weight:700;padding:1px 6px;background:rgba(0,132,208,.08);color:var(--ftd-blue);border:1px solid rgba(0,132,208,.2);border-radius:3px;}
-.status-badge{font-size:8px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;flex-shrink:0;}
-.status-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
-.status-warning{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
-.status-critical{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
-.metrics{display:flex;flex-direction:column;gap:6px;}
-.metric-row{display:flex;align-items:center;gap:8px;}
-.metric-label{font-size:8px;font-weight:700;color:var(--muted);width:26px;letter-spacing:.5px;text-transform:uppercase;}
-.metric-bar-bg{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;}
-.metric-bar-fill{height:100%;transition:width .8s ease;border-radius:2px;}
-.metric-val{font-size:9px;font-weight:700;width:32px;text-align:right;}
-.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
-.next-maint{font-size:9px;color:var(--muted);font-weight:500;}
-.next-maint strong{color:var(--ftd-navy);font-weight:700;}
-.days-badge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:20px;}
-.card-actions{display:none;position:absolute;top:10px;right:8px;gap:4px;}
-.server-card:hover .card-actions{display:flex;}
-.card-edit-btn{background:rgba(0,132,208,.1);border:1px solid rgba(0,132,208,.3);color:var(--ftd-blue);font-size:8px;font-weight:700;padding:2px 8px;cursor:pointer;font-family:var(--sans);border-radius:var(--r);transition:all .15s;}
-.card-edit-btn:hover{background:rgba(0,132,208,.2);}
-.card-del-btn{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);font-size:8px;font-weight:700;padding:2px 8px;cursor:pointer;font-family:var(--sans);border-radius:var(--r);}
-.saving-overlay{position:absolute;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--ftd-blue);border-radius:var(--r);}
+.store-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 4px rgba(0,40,88,.05);overflow:hidden;transition:all .18s;cursor:pointer;}
+.store-card:hover{border-color:var(--ftd-blue);box-shadow:0 4px 16px rgba(0,40,88,.1);transform:translateY(-1px);}
+.store-card-header{background:var(--ftd-navy);padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;}
+.store-card-header.warning{background:linear-gradient(135deg,#7a4f00,#c47900);}
+.store-card-header.critical{background:linear-gradient(135deg,#7a0010,#c0001a);}
+.store-title{font-weight:800;font-size:13px;color:#fff;letter-spacing:.3px;}
+.store-meta{font-size:9px;color:rgba(255,255,255,.6);margin-top:2px;font-weight:500;}
+.store-status-badge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.15);white-space:nowrap;}
+
+.store-card-body{padding:12px 14px;}
+.equipo-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.equipo-type-pill{text-align:center;padding:6px 4px;border-radius:var(--r);border:1px solid var(--border);}
+.equipo-type-pill.srv{background:var(--srv-bg);border-color:rgba(0,132,208,.2);}
+.equipo-type-pill.caja{background:var(--caja-bg);border-color:rgba(0,135,90,.2);}
+.equipo-type-pill.auto{background:var(--auto-bg);border-color:rgba(196,121,0,.2);}
+.equipo-type-pill.ger{background:var(--ger-bg);border-color:rgba(123,63,160,.2);}
+.pill-icon{font-size:14px;display:block;margin-bottom:2px;}
+.pill-label{font-size:7px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;display:block;}
+.pill-count{font-size:13px;font-weight:900;display:block;line-height:1.2;}
+.pill-alert{font-size:7px;font-weight:700;display:block;margin-top:1px;}
+.srv .pill-label,.srv .pill-count{color:var(--srv);}
+.caja .pill-label,.caja .pill-count{color:var(--caja);}
+.auto .pill-label,.auto .pill-count{color:var(--auto);}
+.ger .pill-label,.ger .pill-count{color:var(--ger);}
+
+.store-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);}
+.store-card-footer .btn-detail{background:var(--ftd-blue);color:#fff;border:none;font-family:var(--sans);font-size:9px;font-weight:700;padding:5px 12px;border-radius:var(--r);cursor:pointer;letter-spacing:.5px;transition:all .2s;}
+.store-card-footer .btn-detail:hover{background:#006fb0;}
+.next-maint-info{font-size:9px;color:var(--muted);font-weight:500;}
+.next-maint-info strong{color:var(--ftd-navy);font-weight:700;}
+
 .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;font-weight:500;}
 
 /* ── SIDEBAR ── */
 .sidebar{display:flex;flex-direction:column;overflow-y:auto;background:var(--surface2);}
-.sidebar-section{padding:16px 18px;border-bottom:1px solid var(--border);}
+.sidebar-section{padding:14px 16px;border-bottom:1px solid var(--border);}
 .timeline{display:flex;flex-direction:column;}
-.timeline-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.timeline-item{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);}
 .timeline-item:last-child{border-bottom:none;}
-.tl-date{min-width:40px;font-size:9px;font-weight:600;color:var(--muted);padding-top:1px;text-align:right;}
-.tl-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+.tl-date{min-width:40px;font-size:8px;font-weight:600;color:var(--muted);padding-top:1px;text-align:right;}
+.tl-dot{width:7px;height:7px;border-radius:50%;margin-top:3px;flex-shrink:0;}
 .tl-content{flex:1;}
 .tl-server{font-size:11px;font-weight:700;color:var(--ftd-navy);}
-.tl-type{font-size:9px;color:var(--muted);font-weight:500;margin-top:1px;}
-.tl-urgency{font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;align-self:flex-start;flex-shrink:0;}
-.log-list{display:flex;flex-direction:column;max-height:190px;overflow-y:auto;}
-.log-entry{font-size:9px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px;font-weight:500;}
+.tl-type{font-size:8px;color:var(--muted);font-weight:500;margin-top:1px;}
+.tl-urgency{font-size:8px;font-weight:700;padding:2px 5px;border-radius:10px;align-self:flex-start;flex-shrink:0;}
+.log-list{display:flex;flex-direction:column;max-height:180px;overflow-y:auto;}
+.log-entry{font-size:9px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:6px;font-weight:500;}
 .log-time{color:var(--muted);white-space:nowrap;font-weight:400;}
 .log-msg{flex:1;}
 .log-ok{color:var(--green);} .log-warn{color:var(--amber);} .log-err{color:var(--red);} .log-info{color:var(--ftd-blue);}
 
-/* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,20,50,.5);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;}
+/* ── MODAL BASE ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,20,50,.55);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);max-width:96vw;max-height:92vh;overflow-y:auto;padding:28px;position:relative;animation:modalIn .2s ease;border-radius:8px;box-shadow:0 20px 60px rgba(0,20,50,.2);}
+.modal{background:var(--surface);border:1px solid var(--border);max-width:96vw;max-height:93vh;overflow-y:auto;padding:26px;position:relative;animation:modalIn .2s ease;border-radius:8px;box-shadow:0 20px 60px rgba(0,20,50,.2);}
 @keyframes modalIn{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
-.modal-title{font-weight:800;font-size:16px;letter-spacing:.5px;color:var(--ftd-navy);margin-bottom:20px;}
-.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;transition:color .15s;}
+.modal-title{font-weight:800;font-size:16px;color:var(--ftd-navy);margin-bottom:18px;}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
 .modal-close:hover{color:var(--red);}
 .form-sec{font-size:8px;font-weight:800;letter-spacing:2.5px;color:var(--ftd-blue);text-transform:uppercase;padding:10px 0 7px;border-top:1px solid var(--border);margin-bottom:10px;margin-top:4px;}
 .form-sec:first-of-type{border-top:none;padding-top:0;}
 .form-group{margin-bottom:12px;}
 .form-label{display:block;font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.form-input,.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 12px;outline:none;transition:all .2s;border-radius:var(--r);}
-.form-input:focus,.form-select:focus{border-color:var(--ftd-blue);box-shadow:0 0 0 3px rgba(0,132,208,.1);}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 12px;outline:none;transition:all .2s;border-radius:var(--r);}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--ftd-blue);box-shadow:0 0 0 3px rgba(0,132,208,.1);}
+.form-textarea{resize:vertical;min-height:70px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.btn-primary{background:var(--ftd-blue);color:#fff;border:none;font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.5px;padding:11px 20px;cursor:pointer;transition:all .2s;border-radius:var(--r);}
-.btn-primary:hover{background:#006fb0;box-shadow:0 4px 16px rgba(0,132,208,.3);}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.btn-primary{background:var(--ftd-blue);color:#fff;border:none;font-family:var(--sans);font-size:11px;font-weight:700;padding:11px 20px;cursor:pointer;transition:all .2s;border-radius:var(--r);}
+.btn-primary:hover{background:#006fb0;}
 .btn-primary:disabled{background:var(--muted);cursor:not-allowed;}
-.btn-danger{background:var(--red);color:#fff;border:none;font-family:var(--sans);font-size:11px;font-weight:700;padding:11px 20px;cursor:pointer;transition:all .2s;border-radius:var(--r);}
-.btn-sec{background:transparent;color:var(--text2);border:1px solid var(--border2);font-family:var(--sans);font-size:11px;font-weight:600;padding:11px 20px;cursor:pointer;transition:all .2s;border-radius:var(--r);}
+.btn-danger{background:var(--red);color:#fff;border:none;font-family:var(--sans);font-size:11px;font-weight:700;padding:11px 20px;cursor:pointer;border-radius:var(--r);}
+.btn-sec{background:transparent;color:var(--text2);border:1px solid var(--border2);font-family:var(--sans);font-size:11px;font-weight:600;padding:11px 20px;cursor:pointer;border-radius:var(--r);}
 .btn-sec:hover{border-color:var(--ftd-navy);color:var(--ftd-navy);}
+.btn-sm{font-size:9px;font-weight:700;padding:4px 10px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--sans);}
 .btn-row{display:flex;gap:8px;margin-top:6px;}
 .btn-row .btn-primary{flex:1;}
-#editModal .modal,#addModal .modal{width:520px;}
-.delete-zone{margin-top:20px;padding:16px;border:1px solid var(--red-border);background:var(--red-bg);border-radius:var(--r);}
-.delete-zone-title{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--red);text-transform:uppercase;margin-bottom:8px;}
-#confirmModal .modal{width:420px;}
-#importModal .modal{width:580px;}
-.drop-zone{border:2px dashed var(--border2);padding:32px;text-align:center;cursor:pointer;transition:all .2s;border-radius:8px;margin-bottom:16px;background:var(--surface2);}
-.drop-zone:hover,.drop-zone.drag-over{border-color:var(--ftd-blue);background:rgba(0,132,208,.04);}
-.drop-icon{font-size:36px;margin-bottom:10px;}
-.drop-title{font-weight:700;font-size:14px;color:var(--ftd-navy);margin-bottom:4px;}
-.drop-sub{font-size:10px;color:var(--muted);font-weight:500;}
-#importInput{display:none;}
-.import-preview{background:var(--surface2);border:1px solid var(--border);padding:14px;border-radius:var(--r);max-height:200px;overflow-y:auto;margin-bottom:14px;}
-.import-preview-title{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
-.import-row{font-size:9px;padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;font-weight:500;}
-.import-row-num{color:var(--ftd-blue);font-weight:700;width:14px;flex-shrink:0;}
-.import-row-name{color:var(--ftd-navy);font-weight:700;flex:1;}
-.import-row-date{color:var(--muted);}
-.import-row-status{font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;}
-.import-match{color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);}
-.import-nomatch{color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-border);}
-.import-stats{display:flex;gap:16px;margin-bottom:14px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);}
-.import-stat{font-size:9px;color:var(--muted);font-weight:600;}
-.import-stat strong{font-weight:900;font-size:18px;display:block;color:var(--ftd-navy);}
-.info-chip{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 7px;background:rgba(0,132,208,.08);border:1px solid rgba(0,132,208,.2);color:var(--ftd-blue);border-radius:3px;}
 
-/* ── LOADING SCREEN ── */
+/* ── MODAL TIENDA (detalle) ── */
+#storeModal .modal{width:820px;}
+.store-modal-header{background:var(--ftd-navy);margin:-26px -26px 20px;padding:20px 26px;border-radius:8px 8px 0 0;}
+.store-modal-title{font-weight:800;font-size:18px;color:#fff;letter-spacing:.5px;}
+.store-modal-meta{font-size:11px;color:rgba(255,255,255,.55);margin-top:4px;font-weight:500;}
+
+.equipo-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;}
+.equipo-tab{background:transparent;border:none;font-family:var(--sans);font-size:10px;font-weight:700;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--muted);letter-spacing:.5px;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.equipo-tab:hover{color:var(--text);}
+.equipo-tab.active{color:var(--ftd-blue);border-bottom-color:var(--ftd-blue);}
+.equipo-tab .tab-count{font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--surface3);}
+.equipo-tab.active .tab-count{background:rgba(0,132,208,.12);color:var(--ftd-blue);}
+
+.equipos-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.equipo-row{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.equipo-row.critical{border-left:4px solid var(--red);}
+.equipo-row.warning{border-left:4px solid var(--amber);}
+.equipo-row.ok{border-left:4px solid var(--green);}
+.equipo-info{flex:1;}
+.equipo-name{font-weight:700;font-size:12px;color:var(--ftd-navy);}
+.equipo-detail{font-size:10px;color:var(--muted);font-weight:500;margin-top:2px;}
+.equipo-badges{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.badge{font-size:8px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.badge-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-warn{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+.badge-crit{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.badge-info{background:rgba(0,132,208,.08);color:var(--ftd-blue);border:1px solid rgba(0,132,208,.2);}
+.badge-gray{background:var(--surface3);color:var(--muted);border:1px solid var(--border);}
+.equipo-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-maint{background:var(--ftd-blue);color:#fff;border:none;font-family:var(--sans);font-size:9px;font-weight:700;padding:5px 10px;border-radius:var(--r);cursor:pointer;white-space:nowrap;}
+.btn-hist{background:var(--surface3);color:var(--text2);border:1px solid var(--border);font-family:var(--sans);font-size:9px;font-weight:700;padding:5px 10px;border-radius:var(--r);cursor:pointer;white-space:nowrap;}
+.btn-edit-eq{background:transparent;color:var(--muted);border:1px solid var(--border);font-family:var(--sans);font-size:9px;font-weight:700;padding:5px 8px;border-radius:var(--r);cursor:pointer;}
+
+.add-equipo-btn{width:100%;background:transparent;border:2px dashed var(--border2);color:var(--ftd-blue);font-family:var(--sans);font-size:11px;font-weight:700;padding:10px;border-radius:var(--r);cursor:pointer;transition:all .2s;}
+.add-equipo-btn:hover{background:rgba(0,132,208,.04);border-color:var(--ftd-blue);}
+
+/* ── HISTORIAL PANEL ── */
+.hist-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
+.hist-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;}
+.hist-date{font-size:10px;font-weight:700;color:var(--ftd-blue);}
+.hist-tech{font-size:10px;color:var(--text2);font-weight:600;margin-top:2px;}
+.hist-notes{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5;}
+.hist-empty{text-align:center;padding:20px;color:var(--muted);font-size:11px;}
+
+/* ── MODAL MANTENIMIENTO ── */
+#maintModal .modal{width:480px;}
+#equipoModal .modal{width:480px;}
+#histModal .modal{width:500px;}
+#confirmDelModal .modal{width:400px;}
+
+/* ── TYPE COLORS ── */
+.type-srv{color:var(--srv);} .type-caja{color:var(--caja);} .type-auto{color:var(--auto);} .type-ger{color:var(--ger);}
+
+/* ── LOADING ── */
 #loadingScreen{position:fixed;inset:0;background:var(--ftd-navy);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
 .loading-logo{font-weight:800;font-size:28px;letter-spacing:5px;color:#fff;}
 .loading-logo span{color:var(--ftd-blue);}
-.loading-sub{font-size:10px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,.4);}
 .loading-bar-bg{width:240px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
-.loading-bar{height:100%;background:var(--ftd-blue);border-radius:2px;animation:loadingAnim 1.8s ease-in-out infinite;}
-@keyframes loadingAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+.loading-bar{height:100%;background:var(--ftd-blue);border-radius:2px;animation:loadAnim 1.8s ease-in-out infinite;}
+@keyframes loadAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
 .loading-msg{font-size:10px;color:rgba(255,255,255,.4);font-weight:500;}
 
-@media(max-width:1024px){.main{grid-template-columns:1fr;}.stats-bar{grid-template-columns:repeat(3,1fr);}.sidebar{border-top:1px solid var(--border);}}
+@media(max-width:1100px){.main{grid-template-columns:1fr;}.stats-bar{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.stats-bar{grid-template-columns:repeat(2,1fr);}.header-center{display:none;}}
 </style>
 </head>
 <body>
 
-<!-- Loading screen -->
 <div id="loadingScreen">
   <div class="loading-logo"><span>FARMA</span>TODO</div>
-  <div class="loading-sub">SRV · MONITOR</div>
+  <div style="font-size:9px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,.4)">GESTIÓN DE EQUIPOS</div>
   <div class="loading-bar-bg"><div class="loading-bar"></div></div>
   <div class="loading-msg" id="loadingMsg">Conectando con Google Sheets...</div>
 </div>
@@ -236,14 +261,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     </div>
     <div>
       <div class="logo-name">FARMATODO</div>
-      <span class="logo-subtitle">SRV · MONITOR</span>
+      <span class="logo-subtitle">GESTIÓN DE EQUIPOS</span>
     </div>
   </div>
   <div class="header-center">
-    <button class="hdr-btn" onclick="openImportModal()">⬆ Importar Historial</button>
     <button class="hdr-btn" onclick="exportExcel()">⬇ Excel</button>
     <button class="hdr-btn" onclick="exportPDF()">⬇ PDF</button>
-    <button class="hdr-btn accent" onclick="openAddModal()">+ Agregar Servidor</button>
+    <button class="hdr-btn accent" onclick="openAddStoreModal()">+ Nueva Tienda</button>
   </div>
   <div class="header-right">
     <div id="connStatus" class="conn-status conn-loading"><div class="conn-dot"></div><span>Conectando...</span></div>
@@ -252,42 +276,44 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   </div>
 </header>
 
-<!-- Config banner — se oculta cuando hay URL configurada -->
 <div id="configBanner" class="config-banner">
-  ⚙️ <strong>Configura la URL del Apps Script:</strong>
-  <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/XXXXXXXXX/exec" />
+  ⚙️ <strong>URL del Apps Script:</strong>
+  <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/XXXXXX/exec" />
   <button onclick="saveScriptUrl()">Guardar y Conectar</button>
-  <span style="color:var(--muted);font-weight:400">— <a onclick="showSetupGuide()">Ver guía de configuración</a></span>
 </div>
 
+<!-- STATS BAR -->
 <div class="stats-bar">
-  <div class="stat-item" style="--sc:var(--ftd-blue)"><div class="stat-label">Total Servidores</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">en todas las tiendas</div></div>
-  <div class="stat-item" style="--sc:var(--ftd-navy)"><div class="stat-label">Tiendas</div><div class="stat-value" id="statStores">—</div><div class="stat-sub">ubicaciones activas</div></div>
-  <div class="stat-item" style="--sc:var(--green)"><div class="stat-label">Estado Óptimo</div><div class="stat-value" id="statOk">—</div><div class="stat-sub">operando normal</div></div>
-  <div class="stat-item" style="--sc:var(--amber)"><div class="stat-label">Requieren Atención</div><div class="stat-value" id="statWarn">—</div><div class="stat-sub">próximo mantenimiento</div></div>
-  <div class="stat-item" style="--sc:var(--red)"><div class="stat-label">Críticos</div><div class="stat-value" id="statCrit">—</div><div class="stat-sub">acción inmediata</div></div>
+  <div class="stat-item" style="--sc:var(--ftd-blue)"><div class="stat-label">Tiendas</div><div class="stat-value" id="statTiendas">—</div><div class="stat-sub">ubicaciones activas</div></div>
+  <div class="stat-item" style="--sc:var(--srv)"><div class="stat-label">Servidores</div><div class="stat-value" id="statSrv">—</div><div class="stat-sub">equipos registrados</div></div>
+  <div class="stat-item" style="--sc:var(--caja)"><div class="stat-label">Cajas</div><div class="stat-value" id="statCajas">—</div><div class="stat-sub">equipos registrados</div></div>
+  <div class="stat-item" style="--sc:var(--auto)"><div class="stat-label">Auto Pagos</div><div class="stat-value" id="statAuto">—</div><div class="stat-sub">equipos registrados</div></div>
+  <div class="stat-item" style="--sc:var(--ger)"><div class="stat-label">PC Gerencia</div><div class="stat-value" id="statGer">—</div><div class="stat-sub">equipos registrados</div></div>
+  <div class="stat-item" style="--sc:var(--red)"><div class="stat-label">Críticos</div><div class="stat-value" id="statCrit">—</div><div class="stat-sub">requieren atención</div></div>
 </div>
 
+<!-- FILTER + SEARCH -->
 <div class="filter-wrap">
   <div class="filter-bar" id="filterBar"><div class="filter-label">Área</div></div>
   <div class="search-wrap">
-    <input class="search-input" id="searchInput" placeholder="🔍  Buscar tienda, ciudad..." oninput="renderServers()" />
+    <input class="search-input" id="searchInput" placeholder="🔍  Buscar tienda, ciudad..." oninput="renderStores()" />
   </div>
 </div>
 
+<!-- MAIN -->
 <div class="main">
-  <div class="servers-panel">
+  <div class="stores-panel">
     <div class="panel-header">
-      <div class="panel-title">Servidores de Tienda</div>
+      <div class="panel-title">Tiendas</div>
       <div class="active-badge" id="activeBadge">Todas las Áreas</div>
     </div>
-    <div class="servers-grid" id="serversGrid">
+    <div class="stores-grid" id="storesGrid">
       <div class="empty-state">Cargando datos desde Google Sheets...</div>
     </div>
   </div>
   <div class="sidebar">
     <div class="sidebar-section">
-      <div class="panel-title" style="margin-bottom:14px">Próximos Mantenimientos</div>
+      <div class="panel-title" style="margin-bottom:12px">Próximos Mantenimientos</div>
       <div class="timeline" id="timeline"></div>
     </div>
     <div class="sidebar-section" style="flex:1">
@@ -297,259 +323,286 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   </div>
 </div>
 
-<!-- ═══ MODAL: AGREGAR ════════════════════ -->
-<div class="modal-overlay" id="addModal">
+<!-- ═══ MODAL: DETALLE TIENDA ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="storeModal">
   <div class="modal">
-    <div class="modal-title">+ Nuevo Servidor</div>
-    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    <button class="modal-close" onclick="closeModal('storeModal')">✕</button>
+    <div class="store-modal-header" id="storeModalHeader">
+      <div class="store-modal-title" id="storeModalTitle">Tienda</div>
+      <div class="store-modal-meta" id="storeModalMeta"></div>
+    </div>
+
+    <!-- Tabs por tipo de equipo -->
+    <div class="equipo-tabs" id="equipoTabs">
+      <button class="equipo-tab active" onclick="switchTab('srv')" id="tab-srv">🖥 Servidor <span class="tab-count" id="tc-srv">0</span></button>
+      <button class="equipo-tab" onclick="switchTab('caja')" id="tab-caja">🛒 Cajas <span class="tab-count" id="tc-caja">0</span></button>
+      <button class="equipo-tab" onclick="switchTab('auto')" id="tab-auto">💳 Auto Pagos <span class="tab-count" id="tc-auto">0</span></button>
+      <button class="equipo-tab" onclick="switchTab('ger')" id="tab-ger">💼 PC Gerencia <span class="tab-count" id="tc-ger">0</span></button>
+    </div>
+
+    <div id="equiposListContainer" class="equipos-list"></div>
+    <button class="add-equipo-btn" id="addEquipoBtn" onclick="openAddEquipoModal()">+ Agregar equipo</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL: AGREGAR / EDITAR EQUIPO ══════════════════════════════ -->
+<div class="modal-overlay" id="equipoModal">
+  <div class="modal">
+    <div class="modal-title" id="equipoModalTitle">+ Nuevo Equipo</div>
+    <button class="modal-close" onclick="closeModal('equipoModal')">✕</button>
+    <input type="hidden" id="eq-id" />
+    <input type="hidden" id="eq-storeNum" />
+    <input type="hidden" id="eq-tipo" />
+
     <div class="form-sec">Identificación</div>
-    <div class="form-group"><label class="form-label">Nombre del Servidor</label><input class="form-input" id="add-name" placeholder="ej. SRV-1200" /></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Dirección IP</label><input class="form-input" id="add-ip" placeholder="10.196.X.200" /></div>
-      <div class="form-group"><label class="form-label">Rol</label><select class="form-select"><option>SERVIDOR DE TIENDA</option></select></div>
+      <div class="form-group"><label class="form-label">Tipo de Equipo</label>
+        <select class="form-select" id="eq-tipoSel" onchange="updateEqTipo()">
+          <option value="srv">🖥 Servidor</option>
+          <option value="caja">🛒 Caja Registradora</option>
+          <option value="auto">💳 Auto Pago</option>
+          <option value="ger">💼 PC Gerencia</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Nombre / Ubicación *</label>
+        <input class="form-input" id="eq-nombre" placeholder="ej. Caja 1, Auto Pago 3" />
+      </div>
     </div>
-    <div class="form-sec">Tienda</div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label"># Tienda *</label><input class="form-input" id="add-storeNum" placeholder="ej. 1200" /></div>
-      <div class="form-group"><label class="form-label">Nombre de Tienda *</label><input class="form-input" id="add-storeName" placeholder="ej. Cedritos1" /></div>
+      <div class="form-group"><label class="form-label">Marca</label>
+        <input class="form-input" id="eq-marca" placeholder="ej. HP, Dell, Zebra" />
+      </div>
+      <div class="form-group"><label class="form-label">Modelo</label>
+        <input class="form-input" id="eq-modelo" placeholder="ej. EliteDesk 800" />
+      </div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Área</label><select class="form-select" id="add-area"><option>Area 1</option><option>Area 2</option><option>Area 3</option><option>Area 4</option><option>Area 5</option><option>Area 6</option><option>Area 7</option><option>Area 8</option><option>Area 9</option><option>Area 10</option></select></div>
-      <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="add-ciudad" placeholder="ej. Bogotá" /></div>
+    <div class="form-group"><label class="form-label">Número de Serie</label>
+      <input class="form-input" id="eq-serie" placeholder="ej. SN123456789" />
     </div>
+    <div class="form-group"><label class="form-label">IP / Identificador de Red</label>
+      <input class="form-input" id="eq-ip" placeholder="ej. 10.196.4.200" />
+    </div>
+
     <div class="form-sec">Mantenimiento Preventivo</div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Último Mantenimiento *</label><input class="form-input" id="add-lastMaint" type="date" /></div>
-      <div class="form-group"><label class="form-label">Frecuencia (días)</label><input class="form-input" id="add-freq" type="number" value="90" min="7" /></div>
+      <div class="form-group"><label class="form-label">Último Mantenimiento *</label>
+        <input class="form-input" id="eq-lastMaint" type="date" />
+      </div>
+      <div class="form-group"><label class="form-label">Frecuencia (días)</label>
+        <input class="form-input" id="eq-freq" type="number" value="90" min="7" />
+      </div>
     </div>
-    <div class="form-sec">Métricas Actuales</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">CPU (%)</label><input class="form-input" id="add-cpu" type="number" placeholder="0" min="0" max="100" /></div>
-      <div class="form-group"><label class="form-label">RAM (%)</label><input class="form-input" id="add-ram" type="number" placeholder="0" min="0" max="100" /></div>
+    <div class="form-group"><label class="form-label">Estado</label>
+      <select class="form-select" id="eq-estado">
+        <option value="ok">✅ Operativo</option>
+        <option value="warning">⚠️ Con observaciones</option>
+        <option value="critical">🔴 Fuera de servicio</option>
+      </select>
     </div>
-    <div class="form-group"><label class="form-label">Almacenamiento (%)</label><input class="form-input" id="add-disk" type="number" placeholder="0" min="0" max="100" /></div>
-    <div class="btn-row"><button class="btn-primary" id="addBtn" onclick="addServer()">Registrar Servidor</button></div>
+    <div class="form-group"><label class="form-label">Observaciones</label>
+      <textarea class="form-textarea" id="eq-obs" placeholder="Notas adicionales..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="saveEquipoBtn" onclick="saveEquipo()">Guardar Equipo</button>
+      <button class="btn-sec" onclick="closeModal('equipoModal')">Cancelar</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══ MODAL: EDITAR ════════════════════ -->
-<div class="modal-overlay" id="editModal">
+<!-- ═══ MODAL: REGISTRAR MANTENIMIENTO ══════════════════════════════ -->
+<div class="modal-overlay" id="maintModal">
   <div class="modal">
-    <div class="modal-title" id="editModalTitle">✏ Editar Servidor</div>
-    <button class="modal-close" onclick="closeModal('editModal')">✕</button>
-    <input type="hidden" id="edit-id" />
-    <div class="form-sec">Identificación</div>
-    <div class="form-group"><label class="form-label">Nombre del Servidor</label><input class="form-input" id="edit-name" /></div>
+    <div class="modal-title" id="maintModalTitle">🔧 Registrar Mantenimiento</div>
+    <button class="modal-close" onclick="closeModal('maintModal')">✕</button>
+    <input type="hidden" id="maint-equipoId" />
+
+    <div class="form-sec">Datos del Mantenimiento</div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Dirección IP</label><input class="form-input" id="edit-ip" /></div>
-      <div class="form-group"><label class="form-label">Rol</label><select class="form-select"><option>SERVIDOR DE TIENDA</option></select></div>
+      <div class="form-group"><label class="form-label">Fecha de Mantenimiento *</label>
+        <input class="form-input" id="maint-fecha" type="date" />
+      </div>
+      <div class="form-group"><label class="form-label">Técnico Responsable *</label>
+        <input class="form-input" id="maint-tecnico" placeholder="Nombre del técnico" />
+      </div>
     </div>
-    <div class="form-sec">Tienda</div>
+    <div class="form-group"><label class="form-label">Tipo de Mantenimiento</label>
+      <select class="form-select" id="maint-tipo">
+        <option>Preventivo</option>
+        <option>Correctivo</option>
+        <option>Limpieza</option>
+        <option>Actualización de software</option>
+        <option>Cambio de componente</option>
+        <option>Revisión general</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones / Trabajo realizado</label>
+      <textarea class="form-textarea" id="maint-obs" placeholder="Describe el trabajo realizado, piezas cambiadas, etc."></textarea>
+    </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label"># Tienda</label><input class="form-input" id="edit-storeNum" /></div>
-      <div class="form-group"><label class="form-label">Nombre de Tienda</label><input class="form-input" id="edit-storeName" /></div>
+      <div class="form-group"><label class="form-label">Próximo Mantenimiento (opcional)</label>
+        <input class="form-input" id="maint-proximo" type="date" />
+      </div>
+      <div class="form-group"><label class="form-label">Estado tras el mantenimiento</label>
+        <select class="form-select" id="maint-estado">
+          <option value="ok">✅ Operativo</option>
+          <option value="warning">⚠️ Con observaciones</option>
+          <option value="critical">🔴 Requiere seguimiento</option>
+        </select>
+      </div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Área</label><select class="form-select" id="edit-area"><option>Area 1</option><option>Area 2</option><option>Area 3</option><option>Area 4</option><option>Area 5</option><option>Area 6</option><option>Area 7</option><option>Area 8</option><option>Area 9</option><option>Area 10</option></select></div>
-      <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="edit-ciudad" /></div>
-    </div>
-    <div class="form-sec">Mantenimiento Preventivo</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Último Mantenimiento</label><input class="form-input" id="edit-lastMaint" type="date" /></div>
-      <div class="form-group"><label class="form-label">Frecuencia (días)</label><input class="form-input" id="edit-freq" type="number" min="7" /></div>
-    </div>
-    <div class="form-sec">Métricas Actuales</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">CPU (%)</label><input class="form-input" id="edit-cpu" type="number" min="0" max="100" /></div>
-      <div class="form-group"><label class="form-label">RAM (%)</label><input class="form-input" id="edit-ram" type="number" min="0" max="100" /></div>
-    </div>
-    <div class="form-group"><label class="form-label">Almacenamiento (%)</label><input class="form-input" id="edit-disk" type="number" min="0" max="100" /></div>
-    <div class="btn-row"><button class="btn-primary" id="editBtn" onclick="saveEdit()">Guardar Cambios</button><button class="btn-sec" onclick="closeModal('editModal')">Cancelar</button></div>
-    <div class="delete-zone">
-      <div class="delete-zone-title">⚠ Zona Peligrosa</div>
-      <button class="btn-danger" style="width:100%" onclick="confirmDelete()">🗑 Eliminar este Servidor</button>
+    <div class="btn-row">
+      <button class="btn-primary" id="saveMaintBtn" onclick="saveMantenimiento()">Registrar Mantenimiento</button>
+      <button class="btn-sec" onclick="closeModal('maintModal')">Cancelar</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ MODAL: CONFIRMAR ELIMINAR ════════ -->
-<div class="modal-overlay" id="confirmModal">
+<!-- ═══ MODAL: HISTORIAL DE EQUIPO ══════════════════════════════════ -->
+<div class="modal-overlay" id="histModal">
   <div class="modal">
-    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación</div>
-    <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente el servidor:</p>
-    <p id="confirmServerName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:18px;"></p>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará el registro en Google Sheets y no se puede deshacer.</p>
-    <div class="btn-row"><button class="btn-danger" id="delBtn" onclick="deleteServer()">Sí, Eliminar</button><button class="btn-sec" onclick="closeModal('confirmModal')">Cancelar</button></div>
+    <div class="modal-title" id="histModalTitle">📋 Historial de Mantenimientos</div>
+    <button class="modal-close" onclick="closeModal('histModal')">✕</button>
+    <div id="histList" class="hist-list"></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: IMPORTAR HISTORIAL ════════ -->
-<div class="modal-overlay" id="importModal">
-  <div class="modal">
-    <div class="modal-title">⬆ Importar Historial de Mantenimientos</div>
-    <button class="modal-close" onclick="closeModal('importModal')">✕</button>
-    <p style="font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.7;font-weight:500">
-      Columnas requeridas: <span class="info-chip"># Tienda</span> <span class="info-chip">Fecha Mantenimiento</span> <span class="info-chip">Técnico</span> (opcional) <span class="info-chip">Notas</span> (opcional).
-    </p>
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('importInput').click()" ondragover="e=>{e.preventDefault();this.classList.add('drag-over')}" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
-      <div class="drop-icon">📂</div>
-      <div class="drop-title">Arrastra tu archivo Excel aquí</div>
-      <div class="drop-sub">o haz clic para seleccionar · .xlsx / .xls / .csv</div>
+<!-- ═══ MODAL: NUEVA TIENDA ═════════════════════════════════════════ -->
+<div class="modal-overlay" id="addStoreModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-title">+ Nueva Tienda</div>
+    <button class="modal-close" onclick="closeModal('addStoreModal')">✕</button>
+    <div class="form-sec">Datos de la Tienda</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label"># Tienda *</label><input class="form-input" id="st-num" placeholder="ej. 1004" /></div>
+      <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="st-name" placeholder="ej. Cedritos1" /></div>
     </div>
-    <input type="file" id="importInput" accept=".xlsx,.xls,.csv" onchange="handleFileSelect(event)" />
-    <div id="importPreviewWrap" style="display:none">
-      <div class="import-stats" id="importStats"></div>
-      <div class="import-preview"><div class="import-preview-title">Vista Previa</div><div id="importRows"></div></div>
-      <div class="btn-row"><button class="btn-primary" id="importApplyBtn" onclick="applyImport()">Aplicar e importar a Sheets</button><button class="btn-sec" onclick="resetImport()">Limpiar</button></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Área</label>
+        <select class="form-select" id="st-area">
+          <option>Area 1</option><option>Area 2</option><option>Area 3</option><option>Area 4</option><option>Area 5</option>
+          <option>Area 6</option><option>Area 7</option><option>Area 8</option><option>Area 9</option><option>Area 10</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="st-ciudad" placeholder="ej. Bogotá" /></div>
     </div>
-    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
-      <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Plantilla</div>
-      <button class="hdr-btn" style="background:var(--green-bg);border-color:var(--green-border);color:var(--green);padding:8px 16px;font-size:10px" onclick="downloadTemplate()">⬇ Descargar Plantilla .XLSX</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL: GUÍA SETUP ════════════════ -->
-<div class="modal-overlay" id="setupModal">
-  <div class="modal" style="width:600px">
-    <div class="modal-title">📋 Guía de Configuración — Google Sheets</div>
-    <button class="modal-close" onclick="closeModal('setupModal')">✕</button>
-    <div style="font-size:12px;line-height:1.9;color:var(--text2);font-weight:500">
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px">
-        <div style="font-size:8px;font-weight:800;letter-spacing:2px;color:var(--ftd-blue);text-transform:uppercase;margin-bottom:10px">Paso 1 — Crear el Google Sheet</div>
-        <p>Crea un nuevo Google Sheet en <strong>sheets.google.com</strong>.<br>
-        Copia el <strong>ID del Sheet</strong> desde la URL:<br>
-        <code style="background:var(--surface3);padding:3px 8px;border-radius:3px;font-size:11px;color:var(--ftd-navy)">docs.google.com/spreadsheets/d/<strong style="color:var(--red)">ESTE_ES_EL_ID</strong>/edit</code></p>
-      </div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px">
-        <div style="font-size:8px;font-weight:800;letter-spacing:2px;color:var(--ftd-blue);text-transform:uppercase;margin-bottom:10px">Paso 2 — Crear el Apps Script</div>
-        <p>Ve a <strong>script.google.com</strong> → Nuevo proyecto.<br>
-        Borra el código existente y pega el contenido del archivo <strong>"Google Apps Script — Backend API"</strong> que generé.<br>
-        Reemplaza <code style="background:var(--surface3);padding:2px 6px;border-radius:3px;font-size:11px">TU_SHEET_ID_AQUI</code> con el ID copiado en el Paso 1.</p>
-      </div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px">
-        <div style="font-size:8px;font-weight:800;letter-spacing:2px;color:var(--ftd-blue);text-transform:uppercase;margin-bottom:10px">Paso 3 — Inicializar las hojas</div>
-        <p>En el editor del Apps Script, selecciona la función <code style="background:var(--surface3);padding:2px 6px;border-radius:3px;font-size:11px">initSheet</code> en el menú desplegable y haz clic en <strong>Ejecutar</strong>.<br>
-        Esto crea las hojas <strong>Servidores</strong> e <strong>Historial</strong> con los encabezados correctos.</p>
-      </div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px">
-        <div style="font-size:8px;font-weight:800;letter-spacing:2px;color:var(--ftd-blue);text-transform:uppercase;margin-bottom:10px">Paso 4 — Publicar como Web App</div>
-        <p>En el Apps Script: <strong>Implementar → Nueva implementación</strong>.<br>
-        Tipo: <strong>Aplicación web</strong>.<br>
-        Ejecutar como: <strong>Yo (tu cuenta)</strong>.<br>
-        Quién tiene acceso: <strong>Cualquier usuario</strong> (o tu organización si usas Workspace).<br>
-        Haz clic en <strong>Implementar</strong> y copia la URL generada.</p>
-      </div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-        <div style="font-size:8px;font-weight:800;letter-spacing:2px;color:var(--ftd-blue);text-transform:uppercase;margin-bottom:10px">Paso 5 — Conectar el Dashboard</div>
-        <p>Pega la URL copiada en el campo de configuración del dashboard (banner amarillo) y haz clic en <strong>Guardar y Conectar</strong>.<br>
-        Luego usa el botón <strong>+ Agregar Servidor</strong> para poblar los datos iniciales.</p>
-      </div>
-    </div>
-    <div class="btn-row" style="margin-top:20px"><button class="btn-primary" onclick="closeModal('setupModal')">Entendido</button></div>
+    <div class="btn-row"><button class="btn-primary" id="saveStoreBtn" onclick="saveNewStore()">Crear Tienda</button></div>
   </div>
 </div>
 
 <script>
 // ══════════════════════════════════════════════════════════════════
-// CONFIG & STATE
+// STATE
 // ══════════════════════════════════════════════════════════════════
 let SCRIPT_URL = localStorage.getItem('ftd_script_url') || '';
-let servers    = [];
-let history    = {};
-let logs       = [];
+let stores  = [];   // [{storeNum, storeName, area, ciudad}]
+let equipos = [];   // [{id, storeNum, tipo, nombre, marca, modelo, serie, ip, lastMaint, freq, estado, obs}]
+let historial = []; // [{id, equipoId, fecha, tecnico, tipo, obs, proximoMaint, estado, registrado}]
+let logs = [];
 let activeFilter = 'all';
-let pendingImport = [];
-let deleteTargetId = null;
-let isSaving   = false;
+let currentStore = null;
+let currentTab   = 'srv';
+let editEquipoId = null;
+let maintEquipoId = null;
 
-// ── URL management ───────────────────────────────────────────────
-function saveScriptUrl() {
+const TIPO_LABELS = {srv:'Servidor', caja:'Caja', auto:'Auto Pago', ger:'PC Gerencia'};
+const TIPO_ICONS  = {srv:'🖥', caja:'🛒', auto:'💳', ger:'💼'};
+
+// ── URL ──────────────────────────────────────────────────────────
+function saveScriptUrl(){
   const url = document.getElementById('scriptUrlInput').value.trim();
-  if (!url.startsWith('https://script.google.com')) {
-    alert('La URL debe comenzar con https://script.google.com');
-    return;
-  }
+  if(!url.startsWith('https://script.google.com')){alert('URL inválida');return;}
   SCRIPT_URL = url;
   localStorage.setItem('ftd_script_url', url);
-  document.getElementById('configBanner').style.display = 'none';
-  addLog('CONFIG', 'URL del Apps Script guardada', 'ok');
+  document.getElementById('configBanner').style.display='none';
+  addLog('CONFIG','URL guardada','ok');
   loadData();
 }
-function showSetupGuide() { openModal('setupModal'); }
 
-// ── API helpers ──────────────────────────────────────────────────
-async function apiGet(action) {
-  if (!SCRIPT_URL) throw new Error('Sin URL de Apps Script configurada');
-  const res = await fetch(`${SCRIPT_URL}?action=${action}`, { redirect:'follow' });
+// ── API ──────────────────────────────────────────────────────────
+async function apiGet(action){
+  const res = await fetch(`${SCRIPT_URL}?action=${action}`,{redirect:'follow'});
   const data = await res.json();
-  if (data.error) throw new Error(data.error);
+  if(data.error) throw new Error(data.error);
   return data;
 }
-async function apiPost(body) {
-  if (!SCRIPT_URL) throw new Error('Sin URL de Apps Script configurada');
-  const res = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    redirect: 'follow',
-    headers: { 'Content-Type': 'text/plain' }, // avoid CORS preflight
-    body: JSON.stringify(body)
-  });
+async function apiPost(body){
+  const res = await fetch(SCRIPT_URL,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
   const data = await res.json();
-  if (data.error) throw new Error(data.error);
+  if(data.error) throw new Error(data.error);
   return data;
 }
-
-function setConnStatus(state, msg) {
-  const el = document.getElementById('connStatus');
-  el.className = 'conn-status conn-' + state;
-  el.innerHTML = `<div class="conn-dot"></div><span>${msg}</span>`;
+function setConn(state,msg){
+  const el=document.getElementById('connStatus');
+  el.className='conn-status conn-'+state;
+  el.innerHTML=`<div class="conn-dot"></div><span>${msg}</span>`;
 }
 
-// ── Load all data from Sheets ────────────────────────────────────
-async function loadData() {
-  setConnStatus('loading', 'Cargando...');
-  document.getElementById('loadingMsg').textContent = 'Leyendo Google Sheets...';
+// ── LOAD DATA ────────────────────────────────────────────────────
+async function loadData(){
+  setConn('loading','Cargando...');
   try {
-    const [srvData, histData] = await Promise.all([
-      apiGet('getServers'),
-      apiGet('getHistory')
+    const [sData, eData, hData] = await Promise.all([
+      apiGet('getStores'),
+      apiGet('getEquipos'),
+      apiGet('getHistorial')
     ]);
-    servers = srvData.servers || [];
-    history = histData.history || {};
-    setConnStatus('ok', `${servers.length} servidores`);
-    addLog('SHEETS', `${servers.length} servidores cargados desde Google Sheets`, 'ok');
+    stores   = sData.stores   || [];
+    equipos  = eData.equipos  || [];
+    historial= hData.historial|| [];
+    setConn('ok', `${stores.length} tiendas`);
+    addLog('SHEETS',`${stores.length} tiendas · ${equipos.length} equipos cargados`,'ok');
     renderFilterBar();
-    renderServers();
-  } catch(err) {
-    setConnStatus('err', 'Sin conexión');
-    addLog('ERROR', err.message, 'err');
-    document.getElementById('serversGrid').innerHTML =
-      `<div class="empty-state">⚠️ No se pudo conectar con Google Sheets.<br><br><small>${err.message}</small></div>`;
+    renderStores();
+    renderTimeline();
+  } catch(err){
+    setConn('err','Sin conexión');
+    addLog('ERROR',err.message,'err');
+    document.getElementById('storesGrid').innerHTML=`<div class="empty-state">⚠️ No se pudo conectar.<br><small>${err.message}</small></div>`;
   } finally {
-    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('loadingScreen').style.display='none';
   }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════════════════════
-function daysUntil(s){
-  // Limpia formato ISO con hora: "2026-01-08T00:00:00.000Z" → "2026-01-08"
-  const clean = String(s.lastMaint||'').split('T')[0].trim();
-  if(!clean || clean.length < 8) return 999;
-  const d = new Date(clean + 'T00:00:00');
-  if(isNaN(d)) return 999;
-  d.setDate(d.getDate() + parseInt(s.freq||90));
-  return Math.ceil((d - new Date()) / 86400000);
+// ── HELPERS ──────────────────────────────────────────────────────
+function parseDate(raw){
+  if(!raw) return null;
+  const s = String(raw).trim();
+  if(s.match(/^\d{4}-\d{2}-\d{2}/)) return new Date(s.substring(0,10)+'T12:00:00');
+  const d = new Date(s);
+  return isNaN(d)?null:d;
 }
-function getStatus(s){const d=daysUntil(s);if(s.disk>=90||s.cpu>=90||s.ram>=90||d<=0)return'critical';if(d<=14||s.disk>=75||s.ram>=85)return'warning';return'ok';}
-function sc(st){return{ok:'var(--green)',warning:'var(--amber)',critical:'var(--red)'}[st]||'var(--green)';}
-function mc(v){return v>=90?'var(--red)':v>=75?'var(--amber)':'var(--ftd-blue)';}
-function fmtD(ds){return new Date(ds+'T00:00:00').toLocaleDateString('es',{day:'2-digit',month:'short'});}
-function nextDate(s){const d=new Date(s.lastMaint+'T00:00:00');d.setDate(d.getDate()+parseInt(s.freq));return d.toISOString().split('T')[0];}
-function areas(){return[...new Set(servers.map(s=>s.area))].sort((a,b)=>parseInt(a.replace('Area ',''))-parseInt(b.replace('Area ','')));}
-function parseExcelDate(v){if(!v)return null;if(v instanceof Date)return v.toISOString().split('T')[0];if(typeof v==='number'){const d=new Date((v-25569)*86400000);return d.toISOString().split('T')[0];}const s=String(v).trim();const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);if(m){const y=m[3].length===2?'20'+m[3]:m[3];return`${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}const d=new Date(s);if(!isNaN(d))return d.toISOString().split('T')[0];return null;}
+function daysUntil(lastMaint, freq){
+  const d = parseDate(lastMaint);
+  if(!d) return 999;
+  d.setDate(d.getDate()+parseInt(freq||90));
+  return Math.ceil((d-new Date())/86400000);
+}
+function nextDateStr(lastMaint, freq){
+  const d = parseDate(lastMaint);
+  if(!d) return '—';
+  d.setDate(d.getDate()+parseInt(freq||90));
+  return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtDate(raw){
+  const d=parseDate(raw);
+  if(!d) return '—';
+  return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'});
+}
+function equipoStatus(eq){
+  if(eq.estado==='critical') return 'critical';
+  const days = daysUntil(eq.lastMaint, eq.freq);
+  if(eq.estado==='warning'||days<=0||days<=14) return days<=0?'critical':'warning';
+  return 'ok';
+}
+function storeStatus(storeNum){
+  const eqs = equipos.filter(e=>e.storeNum===storeNum);
+  if(!eqs.length) return 'ok';
+  if(eqs.some(e=>equipoStatus(e)==='critical')) return 'critical';
+  if(eqs.some(e=>equipoStatus(e)==='warning')) return 'warning';
+  return 'ok';
+}
+function areas(){return[...new Set(stores.map(s=>s.area))].sort((a,b)=>parseInt(a.replace('Area ',''))-parseInt(b.replace('Area ','')));}
+function todayStr(){return new Date().toISOString().split('T')[0];}
 
 // ── FILTER BAR ──────────────────────────────────────────────────
 function renderFilterBar(){
@@ -557,13 +610,13 @@ function renderFilterBar(){
   [...bar.querySelectorAll('.filter-btn')].forEach(b=>b.remove());
   const allBtn=document.createElement('button');
   allBtn.className='filter-btn'+(activeFilter==='all'?' active':'');
-  allBtn.innerHTML=`Todas <span class="filter-count">${servers.length}</span>`;
+  allBtn.innerHTML=`Todas <span class="filter-count">${stores.length}</span>`;
   allBtn.onclick=()=>setFilter('all');
   bar.appendChild(allBtn);
   areas().forEach(area=>{
-    const ss=servers.filter(s=>s.area===area);
-    const hasCrit=ss.some(s=>getStatus(s)==='critical');
-    const hasWarn=ss.some(s=>getStatus(s)==='warning');
+    const ss=stores.filter(s=>s.area===area);
+    const hasCrit=ss.some(s=>storeStatus(s.storeNum)==='critical');
+    const hasWarn=ss.some(s=>storeStatus(s.storeNum)==='warning');
     const dot=hasCrit?'var(--red)':hasWarn?'var(--amber)':null;
     const btn=document.createElement('button');
     btn.className='filter-btn'+(activeFilter===area?' active':'');
@@ -572,91 +625,362 @@ function renderFilterBar(){
     bar.appendChild(btn);
   });
 }
-function setFilter(f){activeFilter=f;renderFilterBar();renderServers();}
+function setFilter(f){activeFilter=f;renderFilterBar();renderStores();}
 
-// ── RENDER SERVERS ──────────────────────────────────────────────
-function renderServers(){
-  const grid=document.getElementById('serversGrid');
+// ── RENDER STORES ────────────────────────────────────────────────
+function renderStores(){
+  const grid=document.getElementById('storesGrid');
   grid.innerHTML='';
   const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  let filtered=activeFilter==='all'?[...servers]:servers.filter(s=>s.area===activeFilter);
-  if(q)filtered=filtered.filter(s=>s.storeName.toLowerCase().includes(q)||s.storeNum.toLowerCase().includes(q)||s.name.toLowerCase().includes(q)||(s.ciudad||'').toLowerCase().includes(q));
+  let filtered=activeFilter==='all'?[...stores]:stores.filter(s=>s.area===activeFilter);
+  if(q) filtered=filtered.filter(s=>s.storeName.toLowerCase().includes(q)||s.storeNum.toLowerCase().includes(q)||(s.ciudad||'').toLowerCase().includes(q));
   document.getElementById('activeBadge').textContent=activeFilter==='all'?'Todas las Áreas':activeFilter;
-  let ok=0,warn=0,crit=0;
-  servers.forEach(s=>{const st=getStatus(s);if(st==='ok')ok++;else if(st==='warning')warn++;else crit++;});
-  document.getElementById('statTotal').textContent=servers.length||'—';
-  document.getElementById('statStores').textContent=servers.length||'—';
-  document.getElementById('statOk').textContent=ok||'—';
-  document.getElementById('statWarn').textContent=warn||'—';
-  document.getElementById('statCrit').textContent=crit||'—';
-  if(!filtered.length){grid.innerHTML='<div class="empty-state">🏪<br><br>No se encontraron servidores.</div>';renderTimeline();renderAlerts();return;}
+
+  // Stats
+  const allEqs = equipos;
+  document.getElementById('statTiendas').textContent=stores.length||'—';
+  document.getElementById('statSrv').textContent=allEqs.filter(e=>e.tipo==='srv').length||'0';
+  document.getElementById('statCajas').textContent=allEqs.filter(e=>e.tipo==='caja').length||'0';
+  document.getElementById('statAuto').textContent=allEqs.filter(e=>e.tipo==='auto').length||'0';
+  document.getElementById('statGer').textContent=allEqs.filter(e=>e.tipo==='ger').length||'0';
+  document.getElementById('statCrit').textContent=allEqs.filter(e=>equipoStatus(e)==='critical').length||'0';
+
+  if(!filtered.length){grid.innerHTML='<div class="empty-state">🏪<br><br>No se encontraron tiendas.</div>';return;}
+
   const ciudades=[...new Set(filtered.map(s=>s.ciudad||''))].sort();
   ciudades.forEach(ciudad=>{
-    const cs=filtered.filter(s=>(s.ciudad||'')===ciudad);if(!cs.length)return;
-    const hasCrit=cs.some(s=>getStatus(s)==='critical');
-    const hasWarn=cs.some(s=>getStatus(s)==='warning');
+    const cs=filtered.filter(s=>(s.ciudad||'')===ciudad);
+    if(!cs.length) return;
+    const hasCrit=cs.some(s=>storeStatus(s.storeNum)==='critical');
+    const hasWarn=cs.some(s=>storeStatus(s.storeNum)==='warning');
     const dotC=hasCrit?'var(--red)':hasWarn?'var(--amber)':'var(--green)';
     const aLab=activeFilter==='all'&&cs[0]?.area?` · ${cs[0].area}`:'';
-    const hdr=document.createElement('div');hdr.className='store-group-header';
-    hdr.innerHTML=`<span class="store-group-label">${ciudad}${aLab}</span><span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;display:inline-block"></span><span class="store-group-line"></span><span class="store-group-count">${cs.length} tiendas</span>`;
+    const hdr=document.createElement('div');hdr.className='area-header';
+    hdr.innerHTML=`<span class="area-label">${ciudad}${aLab}</span><span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;display:inline-block"></span><span class="area-line"></span><span class="area-count">${cs.length} tiendas</span>`;
     grid.appendChild(hdr);
-    cs.forEach(s=>renderCard(s,grid));
+    cs.forEach(s=>renderStoreCard(s,grid));
   });
-  renderTimeline();renderAlerts();
 }
 
-function renderCard(s,grid){
-  const status=getStatus(s),days=daysUntil(s),color=sc(status);
-  const dayLabel=days<=0?`<span style="color:var(--red);font-weight:700">Vencido</span>`:days<=7?`<span style="color:var(--red);font-weight:700">En ${days}d</span>`:days<=14?`<span style="color:var(--amber);font-weight:700">En ${days}d</span>`:`<span style="color:var(--muted);font-weight:600">${days}d</span>`;
-  const histC=(history[s.storeNum]||[]).length;
-  const card=document.createElement('div');card.className='server-card';card.style.setProperty('--sc',color);
+function renderStoreCard(s,grid){
+  const status=storeStatus(s.storeNum);
+  const eqs=equipos.filter(e=>e.storeNum===s.storeNum);
+  const tipos=['srv','caja','auto','ger'];
+  const card=document.createElement('div');
+  card.className='store-card';
+
+  // Header class
+  const hdrClass=status==='critical'?'critical':status==='warning'?'warning':'';
+
+  // Próximo mantenimiento más urgente
+  let minDays=999, nextEq=null;
+  eqs.forEach(e=>{const d=daysUntil(e.lastMaint,e.freq);if(d<minDays){minDays=d;nextEq=e;}});
+
+  const pillsHtml=tipos.map(t=>{
+    const tEqs=eqs.filter(e=>e.tipo===t);
+    const critCount=tEqs.filter(e=>equipoStatus(e)==='critical').length;
+    const warnCount=tEqs.filter(e=>equipoStatus(e)==='warning').length;
+    const alertTxt=critCount>0?`<span style="color:var(--red)">${critCount} crítico${critCount>1?'s':''}</span>`:warnCount>0?`<span style="color:var(--amber)">${warnCount} aviso${warnCount>1?'s':''}</span>`:'';
+    return`<div class="equipo-type-pill ${t}">
+      <span class="pill-icon">${TIPO_ICONS[t]}</span>
+      <span class="pill-label">${TIPO_LABELS[t]}</span>
+      <span class="pill-count">${tEqs.length}</span>
+      <span class="pill-alert">${alertTxt||'&nbsp;'}</span>
+    </div>`;
+  }).join('');
+
+  const daysTxt=minDays<=0?`<span style="color:var(--red);font-weight:700">Vencido</span>`:minDays<=7?`<span style="color:var(--red);font-weight:700">En ${minDays}d</span>`:minDays<=14?`<span style="color:var(--amber);font-weight:700">En ${minDays}d</span>`:minDays===999?'<span style="color:var(--muted)">Sin equipos</span>':`<span style="color:var(--muted)">${minDays}d</span>`;
+
   card.innerHTML=`
-    <div class="card-actions">
-      <button class="card-edit-btn" onclick="openEdit(${s.id});event.stopPropagation()">Editar</button>
-      <button class="card-del-btn" onclick="openConfirmDel(${s.id});event.stopPropagation()">✕</button>
-    </div>
-    <div class="card-header">
+    <div class="store-card-header ${hdrClass}">
       <div>
-        <div class="server-name">${s.storeName}</div>
-        <div class="server-meta">
-          <span class="meta-tag">#${s.storeNum}</span>
-          <span style="font-size:9px;color:var(--muted)">${s.ip!=='POR ASIGNAR'?s.ip:'IP por asignar'}</span>
-          ${histC>0?`<span style="font-size:8px;color:var(--ftd-blue);padding:1px 5px;border:1px solid rgba(0,132,208,.2);border-radius:3px;font-weight:700;background:rgba(0,132,208,.06)">${histC} mant.</span>`:''}
-        </div>
+        <div class="store-title">${s.storeName}</div>
+        <div class="store-meta">#${s.storeNum} · ${s.ciudad||''} · ${eqs.length} equipos</div>
       </div>
-      <span class="status-badge status-${status}">${status==='ok'?'Óptimo':status==='warning'?'Atención':'Crítico'}</span>
+      <div class="store-status-badge">${status==='critical'?'🔴 CRÍTICO':status==='warning'?'⚠️ ATENCIÓN':'✅ ÓPTIMO'}</div>
     </div>
-    <div class="metrics">
-      ${['CPU','RAM','DSK'].map((l,i)=>{const v=[s.cpu,s.ram,s.disk][i];return`<div class="metric-row"><div class="metric-label">${l}</div><div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${v}%;background:${mc(v)}"></div></div><div class="metric-val" style="color:${mc(v)}">${v}%</div></div>`;}).join('')}
-    </div>
-    <div class="card-footer">
-      <div class="next-maint">Próx. Mant: <strong>${fmtD(nextDate(s))}</strong></div>
-      <div class="days-badge" style="background:${status==='ok'?'var(--green-bg)':status==='warning'?'var(--amber-bg)':'var(--red-bg)'};color:${color};border:1px solid ${status==='ok'?'var(--green-border)':status==='warning'?'var(--amber-border)':'var(--red-border)'}">${dayLabel}</div>
+    <div class="store-card-body">
+      <div class="equipo-types">${pillsHtml}</div>
+      <div class="store-card-footer">
+        <div class="next-maint-info">Próx. Mant: ${daysTxt}</div>
+        <button class="btn-detail" onclick="openStoreDetail('${s.storeNum}')">Ver detalle →</button>
+      </div>
     </div>`;
   grid.appendChild(card);
 }
 
 // ── TIMELINE ────────────────────────────────────────────────────
 function renderTimeline(){
-  const src=activeFilter==='all'?servers:servers.filter(s=>s.area===activeFilter);
-  const sorted=[...src].map(s=>({...s,days:daysUntil(s),nd:nextDate(s)})).sort((a,b)=>a.days-b.days).slice(0,10);
-  document.getElementById('timeline').innerHTML=sorted.map(s=>{
-    const c=sc(getStatus(s));
-    const u=s.days<=0?'Vencido':s.days<=7?'Urgente':s.days<=14?'Pronto':'Planif.';
-    const ubg=s.days<=7?'var(--red-bg)':s.days<=14?'var(--amber-bg)':'var(--surface3)';
-    const uc=s.days<=7?'var(--red)':s.days<=14?'var(--amber)':'var(--muted)';
-    return`<div class="timeline-item"><div class="tl-date">${fmtD(s.nd)}</div><div class="tl-dot" style="background:${c}"></div><div class="tl-content"><div class="tl-server">${s.storeName}</div><div class="tl-type">#${s.storeNum} · ${s.ciudad||s.area}</div></div><div class="tl-urgency" style="background:${ubg};color:${uc};border:1px solid ${uc}">${u}</div></div>`;
+  const upcoming=[];
+  equipos.forEach(eq=>{
+    const s=stores.find(x=>x.storeNum===eq.storeNum);
+    const days=daysUntil(eq.lastMaint,eq.freq);
+    upcoming.push({eq,s,days,nd:nextDateStr(eq.lastMaint,eq.freq)});
+  });
+  upcoming.sort((a,b)=>a.days-b.days);
+  const top=upcoming.slice(0,10);
+  document.getElementById('timeline').innerHTML=top.map(({eq,s,days,nd})=>{
+    const st=equipoStatus(eq);
+    const c=st==='critical'?'var(--red)':st==='warning'?'var(--amber)':'var(--green)';
+    const u=days<=0?'Vencido':days<=7?'Urgente':days<=14?'Pronto':'Planif.';
+    const ubg=days<=7?'var(--red-bg)':days<=14?'var(--amber-bg)':'var(--surface3)';
+    const uc=days<=7?'var(--red)':days<=14?'var(--amber)':'var(--muted)';
+    return`<div class="timeline-item">
+      <div class="tl-date" style="font-size:8px">${nd.split(' ').slice(0,2).join(' ')}</div>
+      <div class="tl-dot" style="background:${c}"></div>
+      <div class="tl-content">
+        <div class="tl-server">${eq.nombre}</div>
+        <div class="tl-type">${s?s.storeName:'?'} · ${TIPO_LABELS[eq.tipo]||eq.tipo}</div>
+      </div>
+      <div class="tl-urgency" style="background:${ubg};color:${uc};border:1px solid ${uc}">${u}</div>
+    </div>`;
+  }).join('') || '<div style="font-size:11px;color:var(--muted);padding:10px 0">Sin equipos registrados</div>';
+}
+
+// ── STORE DETAIL ─────────────────────────────────────────────────
+function openStoreDetail(storeNum){
+  currentStore=stores.find(s=>s.storeNum===storeNum);
+  if(!currentStore) return;
+  currentTab='srv';
+
+  document.getElementById('storeModalTitle').textContent=currentStore.storeName;
+  document.getElementById('storeModalMeta').textContent=`#${currentStore.storeNum} · ${currentStore.ciudad||''} · ${currentStore.area}`;
+
+  const status=storeStatus(storeNum);
+  const hdr=document.getElementById('storeModalHeader');
+  hdr.className='store-modal-header'+(status==='critical'?' critical':status==='warning'?' warning':'');
+
+  renderEquipoTabs();
+  renderEquipos();
+  openModal('storeModal');
+}
+
+function renderEquipoTabs(){
+  ['srv','caja','auto','ger'].forEach(t=>{
+    const count=equipos.filter(e=>e.storeNum===currentStore.storeNum&&e.tipo===t).length;
+    document.getElementById('tc-'+t).textContent=count;
+    document.getElementById('tab-'+t).className='equipo-tab'+(currentTab===t?' active':'');
+  });
+}
+function switchTab(t){currentTab=t;renderEquipoTabs();renderEquipos();}
+
+function renderEquipos(){
+  const container=document.getElementById('equiposListContainer');
+  const eqs=equipos.filter(e=>e.storeNum===currentStore.storeNum&&e.tipo===currentTab);
+  document.getElementById('addEquipoBtn').textContent=`+ Agregar ${TIPO_ICONS[currentTab]} ${TIPO_LABELS[currentTab]}`;
+
+  if(!eqs.length){
+    container.innerHTML=`<div style="text-align:center;padding:30px;color:var(--muted);font-size:11px;font-weight:500">No hay ${TIPO_LABELS[currentTab].toLowerCase()}s registrados.<br>Haz clic en el botón para agregar.</div>`;
+    return;
+  }
+
+  container.innerHTML=eqs.map(eq=>{
+    const st=equipoStatus(eq);
+    const days=daysUntil(eq.lastMaint,eq.freq);
+    const daysTxt=days<=0?`<span style="color:var(--red);font-weight:700">Vencido</span>`:days<=7?`<span style="color:var(--red)">En ${days}d</span>`:days<=14?`<span style="color:var(--amber)">En ${days}d</span>`:`${days}d`;
+    const hCount=(historial.filter(h=>h.equipoId===String(eq.id))||[]).length;
+    return`<div class="equipo-row ${st}">
+      <div style="font-size:20px;flex-shrink:0">${TIPO_ICONS[eq.tipo]||'💻'}</div>
+      <div class="equipo-info">
+        <div class="equipo-name">${eq.nombre}</div>
+        <div class="equipo-detail">${[eq.marca,eq.modelo].filter(Boolean).join(' ')}${eq.serie?` · SN: ${eq.serie}`:''}</div>
+        <div class="equipo-badges">
+          <span class="badge badge-${st==='ok'?'ok':st==='warning'?'warn':'crit'}">${st==='ok'?'Operativo':st==='warning'?'Atención':'Crítico'}</span>
+          ${eq.ip?`<span class="badge badge-info">${eq.ip}</span>`:''}
+          <span class="badge badge-gray">Próx: ${daysTxt}</span>
+          ${hCount>0?`<span class="badge badge-info">${hCount} mantenimiento${hCount>1?'s':''}</span>`:''}
+        </div>
+      </div>
+      <div class="equipo-actions">
+        <button class="btn-maint" onclick="openMaintModal('${eq.id}')">🔧 Registrar</button>
+        <button class="btn-hist" onclick="openHistModal('${eq.id}')">📋 Historial</button>
+        <button class="btn-edit-eq" onclick="openEditEquipo('${eq.id}')">✏️</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-// ── ALERTS ──────────────────────────────────────────────────────
-function renderAlerts(){
-  const c=document.getElementById('alertContainer');c.innerHTML='';
-  const crits=servers.filter(s=>{const d=daysUntil(s);return d<=0||s.disk>=90||s.cpu>=90;});
-  const warns=servers.filter(s=>{const d=daysUntil(s);return d>0&&d<=7&&s.disk<90&&s.cpu<90;});
-  if(crits.length){const d=document.createElement('div');d.className='alert-banner alert-critical';d.innerHTML=`⚠ Crítico (${crits.length}): ${crits.slice(0,5).map(s=>`${s.storeName} #${s.storeNum}`).join(', ')}${crits.length>5?` +${crits.length-5} más`:''}`;c.appendChild(d);}
-  if(warns.length){const d=document.createElement('div');d.className='alert-banner alert-warning';d.innerHTML=`◆ Atención (${warns.length}): ${warns.slice(0,5).map(s=>`${s.storeName} #${s.storeNum}`).join(', ')}${warns.length>5?` +${warns.length-5} más`:''}`;c.appendChild(d);}
+// ── ADD / EDIT EQUIPO ────────────────────────────────────────────
+function openAddEquipoModal(){
+  editEquipoId=null;
+  document.getElementById('equipoModalTitle').textContent=`+ Nuevo ${TIPO_ICONS[currentTab]} ${TIPO_LABELS[currentTab]}`;
+  ['eq-id','eq-nombre','eq-marca','eq-modelo','eq-serie','eq-ip','eq-obs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('eq-tipoSel').value=currentTab;
+  document.getElementById('eq-lastMaint').value=todayStr();
+  document.getElementById('eq-freq').value=90;
+  document.getElementById('eq-estado').value='ok';
+  closeModal('storeModal');
+  openModal('equipoModal');
 }
+function openEditEquipo(id){
+  const eq=equipos.find(e=>String(e.id)===String(id));
+  if(!eq) return;
+  editEquipoId=id;
+  document.getElementById('equipoModalTitle').textContent=`✏️ Editar: ${eq.nombre}`;
+  document.getElementById('eq-id').value=eq.id;
+  document.getElementById('eq-tipoSel').value=eq.tipo;
+  document.getElementById('eq-nombre').value=eq.nombre;
+  document.getElementById('eq-marca').value=eq.marca||'';
+  document.getElementById('eq-modelo').value=eq.modelo||'';
+  document.getElementById('eq-serie').value=eq.serie||'';
+  document.getElementById('eq-ip').value=eq.ip||'';
+  document.getElementById('eq-lastMaint').value=String(eq.lastMaint||'').substring(0,10)||todayStr();
+  document.getElementById('eq-freq').value=eq.freq||90;
+  document.getElementById('eq-estado').value=eq.estado||'ok';
+  document.getElementById('eq-obs').value=eq.obs||'';
+  closeModal('storeModal');
+  openModal('equipoModal');
+}
+function updateEqTipo(){currentTab=document.getElementById('eq-tipoSel').value;}
+
+async function saveEquipo(){
+  const nombre=document.getElementById('eq-nombre').value.trim();
+  if(!nombre){alert('El nombre es obligatorio');return;}
+  const btn=document.getElementById('saveEquipoBtn');
+  btn.disabled=true;btn.textContent='Guardando...';
+
+  const eq={
+    id: editEquipoId||Date.now(),
+    storeNum: currentStore.storeNum,
+    tipo: document.getElementById('eq-tipoSel').value,
+    nombre,
+    marca: document.getElementById('eq-marca').value.trim(),
+    modelo: document.getElementById('eq-modelo').value.trim(),
+    serie: document.getElementById('eq-serie').value.trim(),
+    ip: document.getElementById('eq-ip').value.trim(),
+    lastMaint: document.getElementById('eq-lastMaint').value,
+    freq: parseInt(document.getElementById('eq-freq').value)||90,
+    estado: document.getElementById('eq-estado').value,
+    obs: document.getElementById('eq-obs').value.trim()
+  };
+
+  try {
+    await apiPost({action:'saveEquipo',equipo:eq});
+    const idx=equipos.findIndex(e=>String(e.id)===String(eq.id));
+    if(idx>=0) equipos[idx]=eq; else equipos.push(eq);
+    addLog(currentStore.storeName,`${editEquipoId?'Actualizado':'Agregado'}: ${eq.nombre} (${TIPO_LABELS[eq.tipo]})`,'ok');
+    closeModal('equipoModal');
+    currentTab=eq.tipo;
+    renderEquipoTabs();
+    renderEquipos();
+    renderStores();
+    renderTimeline();
+    openModal('storeModal');
+  } catch(err){
+    addLog('ERROR',err.message,'err');
+    alert('Error: '+err.message);
+  } finally {
+    btn.disabled=false;btn.textContent='Guardar Equipo';
+  }
+}
+
+// ── MANTENIMIENTO ────────────────────────────────────────────────
+function openMaintModal(equipoId){
+  maintEquipoId=equipoId;
+  const eq=equipos.find(e=>String(e.id)===String(equipoId));
+  document.getElementById('maintModalTitle').textContent=`🔧 Mantenimiento — ${eq?eq.nombre:'Equipo'}`;
+  document.getElementById('maint-equipoId').value=equipoId;
+  document.getElementById('maint-fecha').value=todayStr();
+  document.getElementById('maint-tecnico').value='';
+  document.getElementById('maint-obs').value='';
+  document.getElementById('maint-tipo').value='Preventivo';
+  document.getElementById('maint-estado').value='ok';
+  // Sugerir próximo mantenimiento
+  const eq2=equipos.find(e=>String(e.id)===String(equipoId));
+  if(eq2){const d=new Date();d.setDate(d.getDate()+(parseInt(eq2.freq)||90));document.getElementById('maint-proximo').value=d.toISOString().split('T')[0];}
+  closeModal('storeModal');
+  openModal('maintModal');
+}
+
+async function saveMantenimiento(){
+  const fecha=document.getElementById('maint-fecha').value;
+  const tecnico=document.getElementById('maint-tecnico').value.trim();
+  if(!fecha||!tecnico){alert('Fecha y técnico son obligatorios');return;}
+  const btn=document.getElementById('saveMaintBtn');
+  btn.disabled=true;btn.textContent='Guardando...';
+
+  const reg={
+    id: Date.now(),
+    equipoId: String(maintEquipoId),
+    fecha,
+    tecnico,
+    tipo: document.getElementById('maint-tipo').value,
+    obs: document.getElementById('maint-obs').value.trim(),
+    proximoMaint: document.getElementById('maint-proximo').value,
+    estado: document.getElementById('maint-estado').value,
+    registrado: new Date().toISOString()
+  };
+
+  try {
+    await apiPost({action:'saveHistorial',registro:reg});
+    historial.push(reg);
+    // Actualizar lastMaint y estado del equipo
+    const eq=equipos.find(e=>String(e.id)===String(maintEquipoId));
+    if(eq){
+      if(fecha>=(eq.lastMaint||'')) eq.lastMaint=fecha;
+      eq.estado=reg.estado;
+      if(reg.proximoMaint){
+        const diff=Math.ceil((new Date(reg.proximoMaint)-new Date(fecha))/86400000);
+        if(diff>0) eq.freq=diff;
+      }
+      await apiPost({action:'saveEquipo',equipo:eq});
+    }
+    addLog(currentStore?.storeName||'TIENDA',`Mantenimiento registrado: ${eq?.nombre||''}`,'ok');
+    closeModal('maintModal');
+    renderEquipos();
+    renderStores();
+    renderTimeline();
+    openModal('storeModal');
+  } catch(err){
+    addLog('ERROR',err.message,'err');
+    alert('Error: '+err.message);
+  } finally {
+    btn.disabled=false;btn.textContent='Registrar Mantenimiento';
+  }
+}
+
+// ── HISTORIAL ────────────────────────────────────────────────────
+function openHistModal(equipoId){
+  const eq=equipos.find(e=>String(e.id)===String(equipoId));
+  document.getElementById('histModalTitle').textContent=`📋 Historial — ${eq?eq.nombre:'Equipo'}`;
+  const regs=historial.filter(h=>h.equipoId===String(equipoId)).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  const list=document.getElementById('histList');
+  if(!regs.length){list.innerHTML='<div class="hist-empty">Sin mantenimientos registrados</div>';openModal('histModal');return;}
+  list.innerHTML=regs.map(r=>`
+    <div class="hist-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="hist-date">${fmtDate(r.fecha)} — ${r.tipo||'Mantenimiento'}</div>
+        <span class="badge badge-${r.estado==='ok'?'ok':r.estado==='warning'?'warn':'crit'}">${r.estado==='ok'?'Operativo':r.estado==='warning'?'Atención':'Crítico'}</span>
+      </div>
+      <div class="hist-tech">👤 ${r.tecnico}</div>
+      ${r.obs?`<div class="hist-notes">${r.obs}</div>`:''}
+      ${r.proximoMaint?`<div style="font-size:9px;color:var(--ftd-blue);margin-top:4px;font-weight:600">Próx. mant programado: ${fmtDate(r.proximoMaint)}</div>`:''}
+    </div>`).join('');
+  closeModal('storeModal');
+  openModal('histModal');
+}
+
+// ── NUEVA TIENDA ─────────────────────────────────────────────────
+function openAddStoreModal(){openModal('addStoreModal');}
+async function saveNewStore(){
+  const num=document.getElementById('st-num').value.trim();
+  const name=document.getElementById('st-name').value.trim();
+  if(!num||!name){alert('# Tienda y Nombre son obligatorios');return;}
+  const btn=document.getElementById('saveStoreBtn');
+  btn.disabled=true;btn.textContent='Guardando...';
+  const store={storeNum:num,storeName:name,area:document.getElementById('st-area').value,ciudad:document.getElementById('st-ciudad').value.trim()};
+  try {
+    await apiPost({action:'saveStore',store});
+    stores.push(store);
+    addLog('NUEVA TIENDA',`${name} #${num} registrada`,'ok');
+    renderFilterBar();renderStores();renderTimeline();closeModal('addStoreModal');
+  } catch(err){addLog('ERROR',err.message,'err');alert('Error: '+err.message);}
+  finally{btn.disabled=false;btn.textContent='Crear Tienda';}
+}
+
+// ── MODALS ──────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 
 // ── LOG ─────────────────────────────────────────────────────────
 function addLog(name,msg,type){
@@ -666,248 +990,74 @@ function addLog(name,msg,type){
   document.getElementById('logList').innerHTML=logs.slice(0,30).map(l=>`<div class="log-entry"><span class="log-time">${l.t}</span><span class="log-msg log-${l.type}">${l.msg}</span></div>`).join('');
 }
 
-// ── CLOCK ───────────────────────────────────────────────────────
+// ── CLOCK ────────────────────────────────────────────────────────
 function tick(){document.getElementById('clock').textContent=new Date().toLocaleString('es',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'}).toUpperCase();}
 
-// ── MODALS ──────────────────────────────────────────────────────
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-
-// ── ADD SERVER ──────────────────────────────────────────────────
-function openAddModal(){document.getElementById('add-lastMaint').value=new Date().toISOString().split('T')[0];if(activeFilter!=='all')document.getElementById('add-area').value=activeFilter;openModal('addModal');}
-
-async function addServer(){
-  const storeNum=document.getElementById('add-storeNum').value.trim();
-  const storeName=document.getElementById('add-storeName').value.trim();
-  const lastMaint=document.getElementById('add-lastMaint').value;
-  if(!storeNum||!storeName||!lastMaint){alert('Campos obligatorios: # Tienda, Nombre y Último Mantenimiento.');return;}
-  const server = {
-    id: Date.now(),
-    name: document.getElementById('add-name').value.trim().toUpperCase()||`SRV-${storeNum}`,
-    ip: document.getElementById('add-ip').value.trim()||'POR ASIGNAR',
-    role: 'SERVIDOR DE TIENDA',
-    storeNum, storeName,
-    area: document.getElementById('add-area').value,
-    ciudad: document.getElementById('add-ciudad').value.trim(),
-    lastMaint,
-    freq: parseInt(document.getElementById('add-freq').value)||90,
-    cpu: parseInt(document.getElementById('add-cpu').value)||0,
-    ram: parseInt(document.getElementById('add-ram').value)||0,
-    disk: parseInt(document.getElementById('add-disk').value)||0
-  };
-  const btn=document.getElementById('addBtn');
-  btn.disabled=true; btn.textContent='Guardando en Sheets...';
-  try {
-    await apiPost({action:'saveServer', server});
-    servers.push(server);
-    addLog(server.name,`Registrado en Sheets: ${storeName} #${storeNum}`,'ok');
-    renderFilterBar(); renderServers(); closeModal('addModal');
-  } catch(err) {
-    addLog('ERROR','No se pudo guardar: '+err.message,'err');
-    alert('Error al guardar: '+err.message);
-  } finally {
-    btn.disabled=false; btn.textContent='Registrar Servidor';
-  }
-}
-
-// ── EDIT SERVER ─────────────────────────────────────────────────
-function openEdit(id){
-  const s=servers.find(x=>x.id==id);if(!s)return;
-  ['id','name','ip','storeNum','storeName','ciudad','lastMaint','freq','cpu','ram','disk'].forEach(f=>document.getElementById('edit-'+f).value=s[f]||'');
-  document.getElementById('edit-area').value=s.area;
-  document.getElementById('editModalTitle').textContent=`✏ Editar: ${s.storeName}`;
-  deleteTargetId=id;
-  openModal('editModal');
-}
-
-async function saveEdit(){
-  const id=Number(document.getElementById('edit-id').value);
-  const idx=servers.findIndex(x=>x.id==id);if(idx<0)return;
-  const s={...servers[idx]};
-  s.name=document.getElementById('edit-name').value.trim().toUpperCase()||s.name;
-  s.ip=document.getElementById('edit-ip').value.trim()||'POR ASIGNAR';
-  s.storeNum=document.getElementById('edit-storeNum').value.trim();
-  s.storeName=document.getElementById('edit-storeName').value.trim();
-  s.area=document.getElementById('edit-area').value;
-  s.ciudad=document.getElementById('edit-ciudad').value.trim();
-  s.lastMaint=document.getElementById('edit-lastMaint').value;
-  s.freq=parseInt(document.getElementById('edit-freq').value)||90;
-  s.cpu=Math.min(100,Math.max(0,parseInt(document.getElementById('edit-cpu').value)||0));
-  s.ram=Math.min(100,Math.max(0,parseInt(document.getElementById('edit-ram').value)||0));
-  s.disk=Math.min(100,Math.max(0,parseInt(document.getElementById('edit-disk').value)||0));
-  const btn=document.getElementById('editBtn');
-  btn.disabled=true; btn.textContent='Guardando...';
-  try {
-    await apiPost({action:'saveServer', server:s});
-    servers[idx]=s;
-    addLog(s.name,`Actualizado en Sheets: ${s.storeName}`,'ok');
-    renderFilterBar(); renderServers(); closeModal('editModal');
-  } catch(err) {
-    addLog('ERROR','No se pudo actualizar: '+err.message,'err');
-    alert('Error al guardar: '+err.message);
-  } finally {
-    btn.disabled=false; btn.textContent='Guardar Cambios';
-  }
-}
-
-// ── DELETE SERVER ────────────────────────────────────────────────
-function openConfirmDel(id){deleteTargetId=id;const s=servers.find(x=>x.id==id);document.getElementById('confirmServerName').textContent=s?`${s.storeName} (#${s.storeNum})`:'';closeModal('editModal');openModal('confirmModal');}
-function confirmDelete(){openConfirmDel(deleteTargetId);}
-
-async function deleteServer(){
-  const btn=document.getElementById('delBtn');
-  btn.disabled=true; btn.textContent='Eliminando...';
-  try {
-    await apiPost({action:'deleteServer', id:deleteTargetId});
-    const s=servers.find(x=>x.id==deleteTargetId);
-    servers=servers.filter(x=>x.id!=deleteTargetId);
-    if(s)addLog(s.name,`Eliminado de Sheets: ${s.storeName}`,'err');
-    renderFilterBar(); renderServers(); closeModal('confirmModal');
-  } catch(err) {
-    addLog('ERROR','No se pudo eliminar: '+err.message,'err');
-    alert('Error al eliminar: '+err.message);
-  } finally {
-    btn.disabled=false; btn.textContent='Sí, Eliminar';
-  }
-}
-
-// ── IMPORT HISTORY ───────────────────────────────────────────────
-function openImportModal(){resetImport();openModal('importModal');}
-function handleDrop(e){e.preventDefault();document.getElementById('dropZone').classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)processImportFile(f);}
-function handleFileSelect(e){const f=e.target.files[0];if(f)processImportFile(f);}
-function processImportFile(file){const reader=new FileReader();reader.onload=ev=>{try{const wb=XLSX.read(ev.target.result,{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:''});parseImportRows(rows);}catch(err){alert('Error al leer: '+err.message);}};reader.readAsArrayBuffer(file);}
-function normalizeCol(row,cands){for(const k of Object.keys(row)){const kl=k.toLowerCase().replace(/[\s_#]/g,'');for(const c of cands){if(kl.includes(c))return row[k];}}return null;}
-function parseImportRows(rows){
-  pendingImport=[];
-  rows.forEach(row=>{
-    const num=String(normalizeCol(row,['tienda','store','num','numero'])||'').trim();
-    const dateRaw=normalizeCol(row,['fecha','date','maint','mantenimiento','realiz']);
-    const tech=String(normalizeCol(row,['tecnico','tech','responsable'])||'').trim();
-    const notes=String(normalizeCol(row,['nota','note','obs','comment'])||'').trim();
-    const dateStr=parseExcelDate(dateRaw);
-    if(!num||!dateStr)return;
-    const match=servers.find(s=>s.storeNum===num);
-    pendingImport.push({num,dateStr,tech,notes,match:match||null});
-  });
-  showImportPreview();
-}
-function showImportPreview(){
-  const matched=pendingImport.filter(r=>r.match).length;
-  const unmatched=pendingImport.filter(r=>!r.match).length;
-  document.getElementById('importStats').innerHTML=`<div class="import-stat"><strong>${pendingImport.length}</strong>registros</div><div class="import-stat"><strong style="color:var(--green)">${matched}</strong>coinciden</div><div class="import-stat"><strong style="color:var(--amber)">${unmatched}</strong>sin coincidencia</div>`;
-  document.getElementById('importRows').innerHTML=pendingImport.slice(0,50).map(r=>`<div class="import-row"><span class="import-row-num">#${r.num}</span><span class="import-row-name">${r.match?r.match.storeName:`Tienda ${r.num}`}</span><span class="import-row-date">${r.dateStr}</span>${r.tech?`<span style="font-size:8px;color:var(--muted)">${r.tech}</span>`:''}<span class="import-row-status ${r.match?'import-match':'import-nomatch'}">${r.match?'OK':'No encontrado'}</span></div>`).join('');
-  document.getElementById('importPreviewWrap').style.display='block';
-}
-async function applyImport(){
-  const toSave=pendingImport.filter(r=>r.match);
-  if(!toSave.length){alert('No hay registros con tiendas coincidentes.');return;}
-  const btn=document.getElementById('importApplyBtn');
-  btn.disabled=true; btn.textContent='Guardando en Sheets...';
-  try {
-    const records=toSave.map(r=>({storeNum:r.num,date:r.dateStr,tech:r.tech,notes:r.notes,imported:new Date().toISOString()}));
-    await apiPost({action:'saveHistory', records});
-    // update local history & lastMaint
-    toSave.forEach(r=>{
-      const s=servers.find(x=>x.id==r.match.id);if(!s)return;
-      if(!history[s.storeNum])history[s.storeNum]=[];
-      history[s.storeNum].push({date:r.dateStr,tech:r.tech,notes:r.notes});
-      history[s.storeNum].sort((a,b)=>b.date.localeCompare(a.date));
-      if(r.dateStr>s.lastMaint){
-        s.lastMaint=r.dateStr;
-        apiPost({action:'saveServer',server:s}); // actualizar lastMaint en sheet
-      }
-    });
-    addLog('IMPORTACIÓN',`${toSave.length} registros guardados en Google Sheets`,'ok');
-    renderFilterBar(); renderServers(); closeModal('importModal');
-  } catch(err) {
-    addLog('ERROR','Importación fallida: '+err.message,'err');
-    alert('Error: '+err.message);
-  } finally {
-    btn.disabled=false; btn.textContent='Aplicar e importar a Sheets';
-  }
-}
-function resetImport(){pendingImport=[];document.getElementById('importPreviewWrap').style.display='none';document.getElementById('importInput').value='';}
-function downloadTemplate(){const ws=XLSX.utils.aoa_to_sheet([['# Tienda','Fecha Mantenimiento','Técnico','Notas'],['1004','08/01/2026','Carlos Pérez','Limpieza general'],['1009','16/03/2026','Ana Gómez','Actualización firmware']]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Historial');XLSX.writeFile(wb,'plantilla_historial.xlsx');}
-
-// ── EXPORT EXCEL ────────────────────────────────────────────────
+// ── EXPORT EXCEL ─────────────────────────────────────────────────
 function exportExcel(){
   const today=new Date().toISOString().split('T')[0];
-  const data=[['Área','Ciudad','# Tienda','Nombre Tienda','Servidor','IP','Último Mant.','Próx. Mant.','Días','Estado','CPU%','RAM%','Disco%']];
-  servers.forEach(s=>{const st=getStatus(s),days=daysUntil(s);data.push([s.area,s.ciudad,s.storeNum,s.storeName,s.name,s.ip,s.lastMaint,nextDate(s),days,st==='ok'?'ÓPTIMO':st==='warning'?'ATENCIÓN':'CRÍTICO',s.cpu,s.ram,s.disk]);});
+  const data=[['Área','Ciudad','# Tienda','Nombre Tienda','Tipo Equipo','Nombre Equipo','Marca','Modelo','Serie','IP','Último Mant.','Próx. Mant.','Días','Estado']];
+  stores.forEach(s=>{
+    const eqs=equipos.filter(e=>e.storeNum===s.storeNum);
+    if(!eqs.length){data.push([s.area,s.ciudad,s.storeNum,s.storeName,'—','Sin equipos','','','','','','','','']);return;}
+    eqs.forEach(eq=>{
+      const days=daysUntil(eq.lastMaint,eq.freq);
+      data.push([s.area,s.ciudad,s.storeNum,s.storeName,TIPO_LABELS[eq.tipo]||eq.tipo,eq.nombre,eq.marca||'',eq.modelo||'',eq.serie||'',eq.ip||'',eq.lastMaint||'',nextDateStr(eq.lastMaint,eq.freq),days===999?'—':days,equipoStatus(eq).toUpperCase()]);
+    });
+  });
   const ws=XLSX.utils.aoa_to_sheet(data);
-  ws['!cols']=[{wch:8},{wch:14},{wch:10},{wch:22},{wch:12},{wch:16},{wch:12},{wch:12},{wch:6},{wch:10},{wch:6},{wch:6},{wch:7}];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Servidores');
-  XLSX.writeFile(wb,`farmatodo_servidores_${today}.xlsx`);
-  addLog('EXPORT',`Excel generado · ${servers.length} servidores`,'ok');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Equipos');
+  XLSX.writeFile(wb,`farmatodo_equipos_${today}.xlsx`);
+  addLog('EXPORT','Excel generado','ok');
 }
 
-// ── EXPORT PDF ──────────────────────────────────────────────────
+// ── EXPORT PDF ────────────────────────────────────────────────────
 function exportPDF(){
   const today=new Date().toLocaleDateString('es',{day:'2-digit',month:'long',year:'numeric'});
-  let ok=0,warn=0,crit=0;
-  servers.forEach(s=>{const st=getStatus(s);if(st==='ok')ok++;else if(st==='warning')warn++;else crit++;});
-  const byArea=areas().map(area=>{const ss=servers.filter(s=>s.area===area);const c=ss.filter(s=>getStatus(s)==='critical').length;const w=ss.filter(s=>getStatus(s)==='warning').length;return{area,total:ss.length,ok:ss.length-c-w,warn:w,crit:c};});
-  const crits=servers.filter(s=>getStatus(s)==='critical');
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FARMATODO SRV·MONITOR</title>
-<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#001e42;}
-.page{padding:32px 36px;max-width:1000px;margin:0 auto;}
-.header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0084d0;padding-bottom:14px;margin-bottom:22px;}
-.title{font-size:24px;font-weight:900;color:#002858;letter-spacing:3px;}.title span{color:#0084d0;}
-.date{font-size:10px;color:#aaa;text-align:right;}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px;}
-.stat{background:#f0f7ff;border:1px solid #ccdff0;padding:12px;border-radius:6px;text-align:center;}
-.sv{font-size:28px;font-weight:900;line-height:1;}.sl{font-size:8px;color:#7a9ab8;letter-spacing:1.5px;margin-top:3px;font-weight:700;text-transform:uppercase;}
-h2{font-size:10px;letter-spacing:2.5px;color:#7a9ab8;font-weight:700;text-transform:uppercase;margin:20px 0 10px;padding-bottom:5px;border-bottom:1px solid #ccdff0;}
-table{width:100%;border-collapse:collapse;}
-th{background:#002858;color:#fff;font-size:9px;padding:7px 9px;text-align:left;font-weight:700;text-transform:uppercase;}
-td{font-size:10px;padding:6px 9px;border-bottom:1px solid #edf4fb;font-weight:500;}
+  const crits=equipos.filter(e=>equipoStatus(e)==='critical');
+  const warns=equipos.filter(e=>equipoStatus(e)==='warning');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FARMATODO Equipos</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',Arial,sans-serif;font-size:11px;color:#001e42;}
+.page{padding:28px 32px;}
+.header{border-bottom:3px solid #0084d0;padding-bottom:12px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end;}
+.title{font-size:22px;font-weight:900;color:#002858;letter-spacing:3px;}.title span{color:#0084d0;}
+h2{font-size:9px;letter-spacing:2px;color:#7a9ab8;font-weight:700;text-transform:uppercase;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #ccdff0;}
+table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+th{background:#002858;color:#fff;font-size:8px;padding:5px 7px;text-align:left;font-weight:700;text-transform:uppercase;}
+td{font-size:9px;padding:5px 7px;border-bottom:1px solid #edf4fb;}
 tr:nth-child(even) td{background:#f8fbff;}
-.bok{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:10px;background:#e6f6f0;color:#00875a;border:1px solid #a3d9c4;}
-.bwarn{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:10px;background:#fff7e6;color:#c47900;border:1px solid #f5c97a;}
-.bcrit{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:10px;background:#fdecea;color:#c0001a;border:1px solid #f5a3ae;}
-.footer{margin-top:30px;padding-top:12px;border-top:1px solid #ccdff0;font-size:9px;color:#aaa;display:flex;justify-content:space-between;}
+.bok{background:#e6f6f0;color:#00875a;border:1px solid #a3d9c4;display:inline-block;font-size:7px;font-weight:700;padding:1px 5px;border-radius:8px;}
+.bwarn{background:#fff7e6;color:#c47900;border:1px solid #f5c97a;display:inline-block;font-size:7px;font-weight:700;padding:1px 5px;border-radius:8px;}
+.bcrit{background:#fdecea;color:#c0001a;border:1px solid #f5a3ae;display:inline-block;font-size:7px;font-weight:700;padding:1px 5px;border-radius:8px;}
+.footer{margin-top:20px;padding-top:10px;border-top:1px solid #ccdff0;font-size:8px;color:#aaa;display:flex;justify-content:space-between;}
 @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
 </style></head><body><div class="page">
-<div class="header"><div><div class="title"><span>FARMA</span>TODO</div><div style="font-size:10px;color:#7a9ab8;letter-spacing:2px;margin-top:3px;font-weight:600">REPORTE DE ESTADO · SERVIDORES ON-PREMISE</div></div><div class="date">Generado: ${today}<br>Total: ${servers.length} servidores</div></div>
-<div class="stats">
-  <div class="stat"><div class="sv" style="color:#0084d0">${servers.length}</div><div class="sl">Total</div></div>
-  <div class="stat"><div class="sv" style="color:#002858">${servers.length}</div><div class="sl">Tiendas</div></div>
-  <div class="stat"><div class="sv" style="color:#00875a">${ok}</div><div class="sl">Óptimo</div></div>
-  <div class="stat"><div class="sv" style="color:#c47900">${warn}</div><div class="sl">Atención</div></div>
-  <div class="stat"><div class="sv" style="color:#c0001a">${crit}</div><div class="sl">Crítico</div></div>
-</div>
-<h2>Resumen por Área</h2>
-<table><thead><tr><th>Área</th><th>Total</th><th>Óptimo</th><th>Atención</th><th>Crítico</th><th>Estado</th></tr></thead><tbody>
-${byArea.map(a=>`<tr><td style="font-weight:700;color:#002858">${a.area}</td><td>${a.total}</td><td style="color:#00875a;font-weight:700">${a.ok}</td><td style="color:#c47900;font-weight:700">${a.warn}</td><td style="color:#c0001a;font-weight:700">${a.crit}</td><td><span class="${a.crit>0?'bcrit':a.warn>0?'bwarn':'bok'}">${a.crit>0?'Crítico':a.warn>0?'Atención':'Óptimo'}</span></td></tr>`).join('')}
+<div class="header"><div><div class="title"><span>FARMA</span>TODO</div><div style="font-size:9px;color:#7a9ab8;letter-spacing:2px;margin-top:2px;font-weight:600">REPORTE DE EQUIPOS · MANTENIMIENTO PREVENTIVO</div></div><div style="font-size:9px;color:#aaa;text-align:right">Generado: ${today}<br>${stores.length} tiendas · ${equipos.length} equipos</div></div>
+${crits.length?`<h2>Equipos Críticos (${crits.length})</h2><table><thead><tr><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Último Mant.</th><th>Días</th><th>Estado</th></tr></thead><tbody>${crits.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${e.lastMaint||'—'}</td><td style="color:#c0001a;font-weight:700">${d<=0?'Vencido':d+'d'}</td><td><span class="bcrit">Crítico</span></td></tr>`;}).join('')}</tbody></table>`:''}
+${warns.length?`<h2>Equipos en Atención (${warns.length})</h2><table><thead><tr><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Último Mant.</th><th>Días</th></tr></thead><tbody>${warns.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${e.lastMaint||'—'}</td><td style="color:#c47900;font-weight:700">${d}d</td></tr>`;}).join('')}</tbody></table>`:''}
+<h2>Todos los Equipos</h2>
+<table><thead><tr><th>Área</th><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Marca/Modelo</th><th>Serie</th><th>Último Mant.</th><th>Días</th><th>Estado</th></tr></thead><tbody>
+${equipos.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const st=equipoStatus(e);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.area:''}</td><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${[e.marca,e.modelo].filter(Boolean).join(' ')||'—'}</td><td>${e.serie||'—'}</td><td>${e.lastMaint||'—'}</td><td style="font-weight:700;color:${st==='critical'?'#c0001a':st==='warning'?'#c47900':'#00875a'}">${d===999?'—':d<=0?'Vencido':d+'d'}</td><td><span class="${st==='ok'?'bok':st==='warning'?'bwarn':'bcrit'}">${st==='ok'?'Operativo':st==='warning'?'Atención':'Crítico'}</span></td></tr>`;}).join('')}
 </tbody></table>
-${crits.length?`<h2>Servidores Críticos (${crits.length})</h2><table><thead><tr><th>Área</th><th>Ciudad</th><th>#</th><th>Nombre</th><th>Servidor</th><th>Último Mant.</th><th>Próx. Mant.</th><th>Días</th></tr></thead><tbody>${crits.map(s=>`<tr><td>${s.area}</td><td>${s.ciudad}</td><td>${s.storeNum}</td><td>${s.storeName}</td><td>${s.name}</td><td>${s.lastMaint}</td><td>${nextDate(s)}</td><td style="color:#c0001a;font-weight:700">${daysUntil(s)<=0?'Vencido':daysUntil(s)+'d'}</td></tr>`).join('')}</tbody></table>`:''}
-<h2>Todos los Servidores</h2>
-<table><thead><tr><th>Área</th><th>Ciudad</th><th>#</th><th>Nombre</th><th>Servidor</th><th>Último Mant.</th><th>Próx. Mant.</th><th>Días</th><th>Estado</th></tr></thead><tbody>
-${servers.map(s=>{const st=getStatus(s),d=daysUntil(s);return`<tr><td>${s.area}</td><td>${s.ciudad}</td><td>${s.storeNum}</td><td>${s.storeName}</td><td>${s.name}</td><td>${s.lastMaint}</td><td>${nextDate(s)}</td><td style="font-weight:700;color:${st==='critical'?'#c0001a':st==='warning'?'#c47900':'#00875a'}">${d<=0?'Vencido':d+'d'}</td><td><span class="${st==='ok'?'bok':st==='warning'?'bwarn':'bcrit'}">${st==='ok'?'Óptimo':st==='warning'?'Atención':'Crítico'}</span></td></tr>`;}).join('')}
-</tbody></table>
-<div class="footer"><span>FARMATODO · SRV·MONITOR</span><span>${new Date().toLocaleString('es')}</span></div>
+<div class="footer"><span>FARMATODO · GESTIÓN DE EQUIPOS</span><span>${new Date().toLocaleString('es')}</span></div>
 </div><script>window.onload=()=>window.print()<\/script></body></html>`;
   const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();}
-  else alert('Permite ventanas emergentes para el PDF.');
-  addLog('EXPORT',`PDF generado · ${servers.length} servidores`,'ok');
+  addLog('EXPORT','PDF generado','ok');
 }
 
-// ══════════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════════
+// ── INIT ─────────────────────────────────────────────────────────
 document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModal(el.id);}));
-tick(); setInterval(tick,1000);
-addLog('SISTEMA','FARMATODO SRV·MONITOR v3 iniciado','ok');
+tick();setInterval(tick,1000);
+addLog('SISTEMA','FARMATODO GESTIÓN DE EQUIPOS iniciado','ok');
 
-if (SCRIPT_URL) {
-  document.getElementById('configBanner').style.display = 'none';
-  document.getElementById('scriptUrlInput').value = SCRIPT_URL;
+if(SCRIPT_URL){
+  document.getElementById('configBanner').style.display='none';
+  document.getElementById('scriptUrlInput').value=SCRIPT_URL;
   loadData();
-} else {
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('serversGrid').innerHTML =
-    '<div class="empty-state">⚙️ Configura la URL del Apps Script en el banner amarillo para conectar con Google Sheets.<br><br><small>Haz clic en "Ver guía de configuración" si necesitas ayuda.</small></div>';
-  setConnStatus('err', 'Sin configurar');
+}else{
+  document.getElementById('loadingScreen').style.display='none';
+  document.getElementById('storesGrid').innerHTML='<div class="empty-state">⚙️ Configura la URL del Apps Script en el banner amarillo.</div>';
+  setConn('err','Sin configurar');
 }
 </script>
 </body>
