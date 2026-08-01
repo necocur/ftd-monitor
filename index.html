@@ -406,6 +406,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
       <button class="btn-primary" id="saveEquipoBtn" onclick="saveEquipo()">Guardar Equipo</button>
       <button class="btn-sec" onclick="closeModal('equipoModal')">Cancelar</button>
     </div>
+    <div id="deleteEquipoZone" style="display:none;margin-top:18px;padding:14px;border:1px solid var(--red-border);background:var(--red-bg);border-radius:var(--r);">
+      <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:var(--red);text-transform:uppercase;margin-bottom:8px;">⚠ Zona Peligrosa</div>
+      <button class="btn-danger" style="width:100%" onclick="confirmDeleteEquipo()">🗑 Eliminar este Equipo</button>
+    </div>
   </div>
 </div>
 
@@ -463,6 +467,37 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     <div class="modal-title" id="histModalTitle">📋 Historial de Mantenimientos</div>
     <button class="modal-close" onclick="closeModal('histModal')">✕</button>
     <div id="histList" class="hist-list"></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR ELIMINAR EQUIPO ════════════════════════════ -->
+<div class="modal-overlay" id="confirmDelEquipoModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación</div>
+    <button class="modal-close" onclick="closeModal('confirmDelEquipoModal')">✕</button>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente el equipo:</p>
+    <p id="confirmDelEquipoName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:18px;"></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará el equipo y no se puede deshacer.</p>
+    <div class="btn-row">
+      <button class="btn-danger" id="confirmDelEquipoBtn" onclick="executeDeleteEquipo()">Sí, Eliminar</button>
+      <button class="btn-sec" onclick="closeModal('confirmDelEquipoModal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR ELIMINAR TIENDA ════════════════════════════ -->
+<div class="modal-overlay" id="confirmDelStoreModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación de Tienda</div>
+    <button class="modal-close" onclick="closeModal('confirmDelStoreModal')">✕</button>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente la tienda:</p>
+    <p id="confirmDelStoreName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:8px;"></p>
+    <p id="confirmDelStoreEquipos" style="font-size:11px;color:var(--red);margin-bottom:18px;font-weight:600;"></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará la tienda y todos sus equipos. No se puede deshacer.</p>
+    <div class="btn-row">
+      <button class="btn-danger" id="confirmDelStoreBtn" onclick="executeDeleteStore()">Sí, Eliminar Todo</button>
+      <button class="btn-sec" onclick="closeModal('confirmDelStoreModal')">Cancelar</button>
+    </div>
   </div>
 </div>
 
@@ -668,6 +703,7 @@ function renderStoreCard(s,grid){
   const tipos=['srv','caja','auto','ger'];
   const card=document.createElement('div');
   card.className='store-card';
+  card.style.position='relative';
 
   // Header class
   const hdrClass=status==='critical'?'critical':status==='warning'?'warning':'';
@@ -693,11 +729,14 @@ function renderStoreCard(s,grid){
 
   card.innerHTML=`
     <div class="store-card-header ${hdrClass}">
-      <div>
+      <div style="flex:1">
         <div class="store-title">${s.storeName}</div>
         <div class="store-meta">#${s.storeNum} · ${s.ciudad||''} · ${eqs.length} equipos</div>
       </div>
-      <div class="store-status-badge">${status==='critical'?'🔴 CRÍTICO':status==='warning'?'⚠️ ATENCIÓN':'✅ ÓPTIMO'}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="store-status-badge">${status==='critical'?'🔴 CRÍTICO':status==='warning'?'⚠️ ATENCIÓN':'✅ ÓPTIMO'}</div>
+        <button onclick="openConfirmDelStore('${s.storeNum}');event.stopPropagation()" title="Eliminar tienda" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;width:24px;height:24px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;line-height:1">✕</button>
+      </div>
     </div>
     <div class="store-card-body">
       <div class="equipo-types">${pillsHtml}</div>
@@ -800,6 +839,74 @@ function renderEquipos(){
   }).join('');
 }
 
+// ── DELETE EQUIPO ────────────────────────────────────────────────
+function confirmDeleteEquipo(){
+  const eq=equipos.find(e=>String(e.id)===String(editEquipoId));
+  if(!eq) return;
+  document.getElementById('confirmDelEquipoName').textContent=`${eq.nombre} (${TIPO_LABELS[eq.tipo]})`;
+  closeModal('equipoModal');
+  openModal('confirmDelEquipoModal');
+}
+async function executeDeleteEquipo(){
+  const btn=document.getElementById('confirmDelEquipoBtn');
+  btn.disabled=true;btn.textContent='Eliminando...';
+  try {
+    await apiPost({action:'deleteEquipo',id:editEquipoId});
+    const eq=equipos.find(e=>String(e.id)===String(editEquipoId));
+    equipos=equipos.filter(e=>String(e.id)!==String(editEquipoId));
+    addLog(currentStore?.storeName||'TIENDA',`Equipo eliminado: ${eq?.nombre||''}`,'err');
+    closeModal('confirmDelEquipoModal');
+    renderEquipoTabs();
+    renderEquipos();
+    renderStores();
+    renderTimeline();
+    openModal('storeModal');
+  } catch(err){
+    addLog('ERROR',err.message,'err');
+    alert('Error al eliminar: '+err.message);
+  } finally {
+    btn.disabled=false;btn.textContent='Sí, Eliminar';
+  }
+}
+
+// ── DELETE STORE ─────────────────────────────────────────────────
+function openConfirmDelStore(storeNum){
+  const s=stores.find(x=>x.storeNum===storeNum);
+  if(!s) return;
+  const eqCount=equipos.filter(e=>e.storeNum===storeNum).length;
+  document.getElementById('confirmDelStoreName').textContent=`${s.storeName} (#${s.storeNum})`;
+  document.getElementById('confirmDelStoreEquipos').textContent=eqCount>0?`⚠️ Esta tienda tiene ${eqCount} equipo${eqCount>1?'s':''} registrados que también serán eliminados.`:'';
+  document.getElementById('confirmDelStoreBtn').dataset.storeNum=storeNum;
+  openModal('confirmDelStoreModal');
+}
+async function executeDeleteStore(){
+  const btn=document.getElementById('confirmDelStoreBtn');
+  const storeNum=btn.dataset.storeNum;
+  btn.disabled=true;btn.textContent='Eliminando...';
+  try {
+    // Eliminar equipos de la tienda primero
+    const storeEquipos=equipos.filter(e=>e.storeNum===storeNum);
+    for(const eq of storeEquipos){
+      await apiPost({action:'deleteEquipo',id:eq.id});
+    }
+    // Eliminar la tienda
+    await apiPost({action:'deleteStore',storeNum});
+    const s=stores.find(x=>x.storeNum===storeNum);
+    stores=stores.filter(x=>x.storeNum!==storeNum);
+    equipos=equipos.filter(e=>e.storeNum!==storeNum);
+    addLog('TIENDA',`Eliminada: ${s?.storeName||storeNum} y ${storeEquipos.length} equipos`,'err');
+    closeModal('confirmDelStoreModal');
+    renderFilterBar();
+    renderStores();
+    renderTimeline();
+  } catch(err){
+    addLog('ERROR',err.message,'err');
+    alert('Error al eliminar: '+err.message);
+  } finally {
+    btn.disabled=false;btn.textContent='Sí, Eliminar Todo';
+  }
+}
+
 // ── ADD / EDIT EQUIPO ────────────────────────────────────────────
 function openAddEquipoModal(){
   editEquipoId=null;
@@ -809,6 +916,7 @@ function openAddEquipoModal(){
   document.getElementById('eq-lastMaint').value=todayStr();
   document.getElementById('eq-freq').value=90;
   document.getElementById('eq-estado').value='ok';
+  document.getElementById('deleteEquipoZone').style.display='none';
   closeModal('storeModal');
   openModal('equipoModal');
 }
