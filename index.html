@@ -761,6 +761,11 @@ async function loadData(){
     stores   = sData.stores   || [];
     equipos  = eData.equipos  || [];
     historial= hData.historial|| [];
+    // Normalizar storeNum e id a texto SIEMPRE, para evitar fallos de comparación
+    // cuando Google Sheets convierte automáticamente valores numéricos
+    stores.forEach(s=>{ s.storeNum=String(s.storeNum||'').trim(); });
+    equipos.forEach(e=>{ e.storeNum=String(e.storeNum||'').trim(); e.id=String(e.id||'').trim(); });
+    historial.forEach(h=>{ h.equipoId=String(h.equipoId||'').trim(); });
     setConn('ok', `${stores.length} tiendas`);
     addLog('SHEETS',`${stores.length} tiendas · ${equipos.length} equipos cargados`,'ok');
     renderFilterBar();
@@ -1125,8 +1130,8 @@ async function saveEquipo(){
   btn.disabled=true;btn.textContent='Guardando...';
 
   const eq={
-    id: editEquipoId||Date.now(),
-    storeNum: currentStore.storeNum,
+    id: editEquipoId||String(Date.now()),
+    storeNum: String(currentStore.storeNum),
     tipo: document.getElementById('eq-tipoSel').value,
     nombre,
     marca: document.getElementById('eq-marca').value.trim(),
