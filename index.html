@@ -695,6 +695,7 @@ function enterApp(){
     document.getElementById('configBanner').style.display='none';
     document.getElementById('scriptUrlInput').value=SCRIPT_URL;
     loadData();
+    startAutoRefresh();
   }else{
     document.getElementById('loadingScreen').style.display='none';
     document.getElementById('storesGrid').innerHTML='<div class="empty-state">⚙️ Configura la URL del Apps Script en el banner amarillo.</div>';
