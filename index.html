@@ -17,7 +17,6 @@
   --green-border:#a3d9c4; --amber-border:#f5c97a; --red-border:#f5a3ae;
   --text:#001e42; --text2:#3a5a7a; --muted:#7a9ab8;
   --sans:'Montserrat','Arial',sans-serif; --r:4px;
-  /* Tipo de equipo colores */
   --srv:#0084d0; --caja:#00875a; --auto:#c47900; --ger:#7b3fa0;
   --srv-bg:rgba(0,132,208,.08); --caja-bg:rgba(0,135,90,.08);
   --auto-bg:rgba(196,121,0,.08); --ger-bg:rgba(123,63,160,.08);
@@ -52,8 +51,45 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 
 /* ── CONFIG BANNER ── */
 .config-banner{background:#fff8e6;border-bottom:2px solid #f5c97a;padding:10px 24px;display:flex;align-items:center;gap:10px;font-size:11px;font-weight:600;color:#7a4f00;}
-.config-banner input{background:#fff;border:1px solid #f5c97a;padding:5px 10px;border-radius:var(--r);font-family:var(--sans);font-size:11px;outline:none;width:380px;color:var(--text);}
+.config-banner input{background:#fff;border:1px solid #f5c97a;padding:5px 10px;border-radius:var(--r);font-family:var(--sans);font-size:11px;font-weight:500;outline:none;width:380px;color:var(--text);}
 .config-banner button{background:var(--ftd-navy);color:#fff;border:none;padding:5px 14px;border-radius:var(--r);font-family:var(--sans);font-size:10px;font-weight:700;cursor:pointer;}
+
+/* ── LOADING / LOGIN ── */
+#loadingScreen{position:fixed;inset:0;background:var(--ftd-navy);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loading-logo{font-weight:800;font-size:28px;letter-spacing:5px;color:#fff;}
+.loading-logo span{color:var(--ftd-blue);}
+.loading-bar-bg{width:240px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.loading-bar{height:100%;background:var(--ftd-blue);border-radius:2px;animation:loadAnim 1.8s ease-in-out infinite;}
+@keyframes loadAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+.loading-msg{font-size:10px;color:rgba(255,255,255,.4);font-weight:500;}
+
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--ftd-navy) 0%,#001333 100%);z-index:9998;display:none;align-items:center;justify-content:center;}
+#loginScreen.show{display:flex;}
+.login-card{background:#fff;border-radius:16px;padding:44px 40px;width:440px;max-width:92vw;box-shadow:0 30px 80px rgba(0,10,30,.5);position:relative;z-index:1;text-align:center;}
+.login-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:8px;}
+.login-isotipo{width:56px;height:56px;background:var(--ftd-navy);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.login-isotipo svg{width:44px;height:44px;}
+.login-title{font-weight:800;font-size:22px;letter-spacing:2px;color:var(--ftd-navy);}
+.login-subtitle{font-size:11px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:-8px;}
+.login-desc{font-size:12px;color:var(--text2);font-weight:500;margin:22px 0 26px;line-height:1.6;}
+.login-badge{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:22px;text-align:left;}
+.login-badge-icon{width:18px;height:18px;flex-shrink:0;color:var(--ftd-blue);}
+#googleBtnContainer{display:flex;justify-content:center;margin-bottom:18px;}
+.login-footer-note{font-size:10px;color:var(--muted);font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;}
+.login-footer-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.login-error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);font-size:11px;font-weight:600;padding:12px 14px;border-radius:8px;margin-bottom:18px;display:none;text-align:left;}
+.login-error.show{display:block;}
+.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px 4px 4px;}
+.user-chip-avatar{width:22px;height:22px;border-radius:50%;background:var(--ftd-blue);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.user-chip-avatar img{width:100%;height:100%;object-fit:cover;}
+.user-chip-name{font-size:10px;font-weight:600;color:#fff;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:13px;padding:0 4px;transition:color .15s;}
+.logout-btn:hover{color:#fff;}
+
+/* ── ALERTS ── */
+.alert-banner{padding:8px 24px;display:flex;align-items:center;gap:9px;font-size:11px;font-weight:600;}
+.alert-critical{background:var(--red-bg);border-bottom:1px solid var(--red-border);color:var(--red);}
+.alert-warning{background:var(--amber-bg);border-bottom:1px solid var(--amber-border);color:var(--amber);}
 
 /* ── STATS BAR ── */
 .stats-bar{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--border);background:var(--border);gap:1px;}
@@ -74,8 +110,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .filter-btn.active .filter-count{background:rgba(0,132,208,.12);color:var(--ftd-blue);}
 .alert-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 .search-wrap{padding:7px 16px;border-left:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:11px;font-weight:500;padding:6px 12px;outline:none;width:200px;border-radius:var(--r);}
-.search-input:focus{border-color:var(--ftd-blue);}
+.search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:11px;font-weight:500;padding:6px 12px;outline:none;width:210px;transition:border-color .2s;border-radius:var(--r);}
+.search-input:focus{border-color:var(--ftd-blue);box-shadow:0 0 0 3px rgba(0,132,208,.1);}
+.search-input::placeholder{color:var(--muted);}
 
 /* ── MAIN LAYOUT ── */
 .main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 220px);}
@@ -85,7 +122,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .panel-title::after{content:'';flex:1;height:1px;background:var(--border);}
 .active-badge{font-weight:700;font-size:9px;letter-spacing:1px;color:var(--ftd-blue);padding:3px 10px;border:1px solid rgba(0,132,208,.3);background:rgba(0,132,208,.06);margin-left:12px;white-space:nowrap;border-radius:20px;}
 
-/* ── STORE CARD ── */
+/* ── STORE CARDS ── */
 .stores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
 .area-header{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:8px 0 4px;margin-top:8px;}
 .area-header:first-child{margin-top:0;}
@@ -93,7 +130,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .area-line{flex:1;height:1px;background:var(--border);}
 .area-count{font-size:8px;color:var(--muted);font-weight:600;background:var(--surface3);padding:2px 8px;border-radius:10px;}
 
-.store-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 4px rgba(0,40,88,.05);overflow:hidden;transition:all .18s;cursor:pointer;}
+.store-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 4px rgba(0,40,88,.05);overflow:hidden;transition:all .18s;cursor:pointer;position:relative;}
 .store-card:hover{border-color:var(--ftd-blue);box-shadow:0 4px 16px rgba(0,40,88,.1);transform:translateY(-1px);}
 .store-card-header{background:var(--ftd-navy);padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;}
 .store-card-header.warning{background:linear-gradient(135deg,#7a4f00,#c47900);}
@@ -101,6 +138,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .store-title{font-weight:800;font-size:13px;color:#fff;letter-spacing:.3px;}
 .store-meta{font-size:9px;color:rgba(255,255,255,.6);margin-top:2px;font-weight:500;}
 .store-status-badge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.15);white-space:nowrap;}
+.store-del-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;width:24px;height:24px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;line-height:1;}
+.store-del-btn:hover{background:rgba(255,255,255,.3);}
 
 .store-card-body{padding:12px 14px;}
 .equipo-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
@@ -123,7 +162,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .store-card-footer .btn-detail:hover{background:#006fb0;}
 .next-maint-info{font-size:9px;color:var(--muted);font-weight:500;}
 .next-maint-info strong{color:var(--ftd-navy);font-weight:700;}
-
 .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;font-weight:500;}
 
 /* ── SIDEBAR ── */
@@ -139,7 +177,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .tl-type{font-size:8px;color:var(--muted);font-weight:500;margin-top:1px;}
 .tl-urgency{font-size:8px;font-weight:700;padding:2px 5px;border-radius:10px;align-self:flex-start;flex-shrink:0;}
 .log-list{display:flex;flex-direction:column;max-height:180px;overflow-y:auto;}
-.log-entry{font-size:9px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:6px;font-weight:500;}
+.log-entry{font-size:8px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:6px;font-weight:500;}
 .log-time{color:var(--muted);white-space:nowrap;font-weight:400;}
 .log-msg{flex:1;}
 .log-ok{color:var(--green);} .log-warn{color:var(--amber);} .log-err{color:var(--red);} .log-info{color:var(--ftd-blue);}
@@ -150,35 +188,34 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .modal{background:var(--surface);border:1px solid var(--border);max-width:96vw;max-height:93vh;overflow-y:auto;padding:26px;position:relative;animation:modalIn .2s ease;border-radius:8px;box-shadow:0 20px 60px rgba(0,20,50,.2);}
 @keyframes modalIn{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
 .modal-title{font-weight:800;font-size:16px;color:var(--ftd-navy);margin-bottom:18px;}
-.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;transition:color .15s;}
 .modal-close:hover{color:var(--red);}
-.form-sec{font-size:8px;font-weight:800;letter-spacing:2.5px;color:var(--ftd-blue);text-transform:uppercase;padding:10px 0 7px;border-top:1px solid var(--border);margin-bottom:10px;margin-top:4px;}
+.form-sec{font-size:8px;letter-spacing:3px;color:var(--ftd-blue);font-weight:800;text-transform:uppercase;padding:10px 0 7px;border-top:1px solid var(--border);margin-bottom:10px;margin-top:3px;}
 .form-sec:first-of-type{border-top:none;padding-top:0;}
 .form-group{margin-bottom:12px;}
-.form-label{display:block;font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 12px;outline:none;transition:all .2s;border-radius:var(--r);}
+.form-label{display:block;font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:5px;font-weight:700;text-transform:uppercase;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:500;padding:9px 12px;outline:none;transition:border-color .2s;border-radius:var(--r);}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--ftd-blue);box-shadow:0 0 0 3px rgba(0,132,208,.1);}
 .form-textarea{resize:vertical;min-height:70px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-.btn-primary{background:var(--ftd-blue);color:#fff;border:none;font-family:var(--sans);font-size:11px;font-weight:700;padding:11px 20px;cursor:pointer;transition:all .2s;border-radius:var(--r);}
-.btn-primary:hover{background:#006fb0;}
+.btn-primary{background:var(--ftd-blue);color:#fff;border:none;font-family:var(--sans);font-size:10px;letter-spacing:1px;padding:11px 20px;cursor:pointer;font-weight:bold;transition:all .2s;border-radius:var(--r);}
+.btn-primary:hover{background:#00b8d4;box-shadow:0 0 20px rgba(0,229,255,.3);}
 .btn-primary:disabled{background:var(--muted);cursor:not-allowed;}
-.btn-danger{background:var(--red);color:#fff;border:none;font-family:var(--sans);font-size:11px;font-weight:700;padding:11px 20px;cursor:pointer;border-radius:var(--r);}
-.btn-sec{background:transparent;color:var(--text2);border:1px solid var(--border2);font-family:var(--sans);font-size:11px;font-weight:600;padding:11px 20px;cursor:pointer;border-radius:var(--r);}
+.btn-danger{background:var(--red);color:#fff;border:none;font-family:var(--sans);font-size:10px;letter-spacing:1px;padding:11px 20px;cursor:pointer;font-weight:bold;transition:all .2s;border-radius:var(--r);}
+.btn-danger:hover{background:#a0001a;}
+.btn-sec{background:transparent;color:var(--text2);border:1px solid var(--border2);font-family:var(--sans);font-size:10px;letter-spacing:1px;padding:11px 20px;cursor:pointer;transition:all .2s;border-radius:var(--r);}
 .btn-sec:hover{border-color:var(--ftd-navy);color:var(--ftd-navy);}
-.btn-sm{font-size:9px;font-weight:700;padding:4px 10px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--sans);}
 .btn-row{display:flex;gap:8px;margin-top:6px;}
 .btn-row .btn-primary{flex:1;}
 
-/* ── MODAL TIENDA (detalle) ── */
 #storeModal .modal{width:820px;}
+#editModal .modal,#addModal .modal,#equipoModal .modal{width:520px;}
 .store-modal-header{background:var(--ftd-navy);margin:-26px -26px 20px;padding:20px 26px;border-radius:8px 8px 0 0;}
 .store-modal-title{font-weight:800;font-size:18px;color:#fff;letter-spacing:.5px;}
 .store-modal-meta{font-size:11px;color:rgba(255,255,255,.55);margin-top:4px;font-weight:500;}
 
-.equipo-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;}
-.equipo-tab{background:transparent;border:none;font-family:var(--sans);font-size:10px;font-weight:700;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--muted);letter-spacing:.5px;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.equipo-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;}
+.equipo-tab{background:transparent;border:none;font-family:var(--sans);font-size:10px;font-weight:700;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--muted);letter-spacing:.5px;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .equipo-tab:hover{color:var(--text);}
 .equipo-tab.active{color:var(--ftd-blue);border-bottom-color:var(--ftd-blue);}
 .equipo-tab .tab-count{font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--surface3);}
@@ -207,56 +244,19 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .add-equipo-btn{width:100%;background:transparent;border:2px dashed var(--border2);color:var(--ftd-blue);font-family:var(--sans);font-size:11px;font-weight:700;padding:10px;border-radius:var(--r);cursor:pointer;transition:all .2s;}
 .add-equipo-btn:hover{background:rgba(0,132,208,.04);border-color:var(--ftd-blue);}
 
-/* ── HISTORIAL PANEL ── */
-.hist-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
+.delete-zone{margin-top:20px;padding:16px;border:1px solid var(--red-border);background:var(--red-bg);border-radius:var(--r);}
+.delete-zone-title{font-size:8px;letter-spacing:2px;color:var(--red);font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+
+#confirmDelEquipoModal .modal,#confirmDelStoreModal .modal{width:420px;}
+#maintModal .modal{width:480px;}
+#histModal .modal{width:500px;}
+
+.hist-list{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;}
 .hist-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;}
 .hist-date{font-size:10px;font-weight:700;color:var(--ftd-blue);}
 .hist-tech{font-size:10px;color:var(--text2);font-weight:600;margin-top:2px;}
 .hist-notes{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5;}
 .hist-empty{text-align:center;padding:20px;color:var(--muted);font-size:11px;}
-
-/* ── MODAL MANTENIMIENTO ── */
-#maintModal .modal{width:480px;}
-#equipoModal .modal{width:480px;}
-#histModal .modal{width:500px;}
-#confirmDelModal .modal{width:400px;}
-
-/* ── TYPE COLORS ── */
-.type-srv{color:var(--srv);} .type-caja{color:var(--caja);} .type-auto{color:var(--auto);} .type-ger{color:var(--ger);}
-
-/* ── LOADING ── */
-#loadingScreen{position:fixed;inset:0;background:var(--ftd-navy);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
-.loading-logo{font-weight:800;font-size:28px;letter-spacing:5px;color:#fff;}
-.loading-logo span{color:var(--ftd-blue);}
-.loading-bar-bg{width:240px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
-.loading-bar{height:100%;background:var(--ftd-blue);border-radius:2px;animation:loadAnim 1.8s ease-in-out infinite;}
-@keyframes loadAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
-.loading-msg{font-size:10px;color:rgba(255,255,255,.4);font-weight:500;}
-
-/* ── LOGIN SCREEN ── */
-#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--ftd-navy) 0%,#001333 100%);z-index:9998;display:none;align-items:center;justify-content:center;}
-#loginScreen.show{display:flex;}
-#loginScreen::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);background-size:32px 32px;pointer-events:none;}
-.login-card{background:#fff;border-radius:16px;padding:44px 40px;width:440px;max-width:92vw;box-shadow:0 30px 80px rgba(0,10,30,.5);position:relative;z-index:1;text-align:center;}
-.login-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:8px;}
-.login-isotipo{width:56px;height:56px;background:var(--ftd-navy);border-radius:12px;display:flex;align-items:center;justify-content:center;}
-.login-isotipo svg{width:44px;height:44px;}
-.login-title{font-weight:800;font-size:22px;letter-spacing:2px;color:var(--ftd-navy);}
-.login-subtitle{font-size:11px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:-8px;}
-.login-desc{font-size:12px;color:var(--text2);font-weight:500;margin:22px 0 26px;line-height:1.6;}
-.login-badge{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:22px;text-align:left;}
-.login-badge-icon{width:18px;height:18px;flex-shrink:0;color:var(--ftd-blue);}
-#googleBtnContainer{display:flex;justify-content:center;margin-bottom:18px;}
-.login-footer-note{font-size:10px;color:var(--muted);font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;}
-.login-footer-dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
-.login-error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);font-size:11px;font-weight:600;padding:12px 14px;border-radius:8px;margin-bottom:18px;display:none;text-align:left;}
-.login-error.show{display:block;}
-.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px 4px 4px;}
-.user-chip-avatar{width:22px;height:22px;border-radius:50%;background:var(--ftd-blue);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
-.user-chip-avatar img{width:100%;height:100%;object-fit:cover;}
-.user-chip-name{font-size:10px;font-weight:600;color:#fff;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.logout-btn{background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:13px;padding:0 4px;transition:color .15s;}
-.logout-btn:hover{color:#fff;}
 
 @media(max-width:1100px){.main{grid-template-columns:1fr;}.stats-bar{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:680px){
@@ -273,7 +273,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 @media(max-width:480px){
   .stores-panel{padding:14px 12px;}
   .stores-grid{grid-template-columns:1fr;}
-  .form-row,.form-row-3{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
   .modal{padding:20px;}
   .equipo-row{flex-wrap:wrap;}
   .equipo-actions{width:100%;justify-content:flex-end;margin-top:8px;}
@@ -292,7 +292,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   <div class="loading-msg" id="loadingMsg">Verificando sesión...</div>
 </div>
 
-<!-- ═══ LOGIN SCREEN ═══════════════════════════════════════════════ -->
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo-wrap">
@@ -364,7 +363,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   <button onclick="saveScriptUrl()">Guardar y Conectar</button>
 </div>
 
-<!-- STATS BAR -->
 <div class="stats-bar">
   <div class="stat-item" style="--sc:var(--ftd-blue)"><div class="stat-label">Tiendas</div><div class="stat-value" id="statTiendas">—</div><div class="stat-sub">ubicaciones activas</div></div>
   <div class="stat-item" style="--sc:var(--srv)"><div class="stat-label">Servidores</div><div class="stat-value" id="statSrv">—</div><div class="stat-sub">equipos registrados</div></div>
@@ -374,7 +372,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   <div class="stat-item" style="--sc:var(--red)"><div class="stat-label">Críticos</div><div class="stat-value" id="statCrit">—</div><div class="stat-sub">requieren atención</div></div>
 </div>
 
-<!-- FILTER + SEARCH -->
 <div class="filter-wrap">
   <div class="filter-bar" id="filterBar"><div class="filter-label">Ciudad</div></div>
   <div class="search-wrap">
@@ -382,7 +379,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
   <div class="stores-panel">
     <div class="panel-header">
@@ -413,15 +409,12 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
       <div class="store-modal-title" id="storeModalTitle">Tienda</div>
       <div class="store-modal-meta" id="storeModalMeta"></div>
     </div>
-
-    <!-- Tabs por tipo de equipo -->
     <div class="equipo-tabs" id="equipoTabs">
       <button class="equipo-tab active" onclick="switchTab('srv')" id="tab-srv">🖥 Servidor <span class="tab-count" id="tc-srv">0</span></button>
       <button class="equipo-tab" onclick="switchTab('caja')" id="tab-caja">🛒 Cajas <span class="tab-count" id="tc-caja">0</span></button>
       <button class="equipo-tab" onclick="switchTab('auto')" id="tab-auto">💳 Auto Pagos <span class="tab-count" id="tc-auto">0</span></button>
       <button class="equipo-tab" onclick="switchTab('ger')" id="tab-ger">💼 PC Gerencia <span class="tab-count" id="tc-ger">0</span></button>
     </div>
-
     <div id="equiposListContainer" class="equipos-list"></div>
     <button class="add-equipo-btn" id="addEquipoBtn" onclick="openAddEquipoModal()">+ Agregar equipo</button>
   </div>
@@ -433,9 +426,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     <div class="modal-title" id="equipoModalTitle">+ Nuevo Equipo</div>
     <button class="modal-close" onclick="closeModal('equipoModal')">✕</button>
     <input type="hidden" id="eq-id" />
-    <input type="hidden" id="eq-storeNum" />
-    <input type="hidden" id="eq-tipo" />
-
     <div class="form-sec">Identificación</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Tipo de Equipo</label>
@@ -446,7 +436,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
           <option value="ger">💼 PC Gerencia</option>
         </select>
       </div>
-      <div class="form-group"><label class="form-label">Nombre / Ubicación *</label>
+      <div class="form-group">
+        <label class="form-label">Nombre / Ubicación *</label>
         <select class="form-select" id="eq-nombreQuick" style="margin-bottom:6px" onchange="applyQuickPick('nombre')"></select>
         <input class="form-input" id="eq-nombre" placeholder="ej. Caja 1, Auto Pago 3" />
       </div>
@@ -462,7 +453,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     <div class="form-group"><label class="form-label">IP / Identificador de Red</label>
       <input class="form-input" id="eq-ip" placeholder="ej. 10.196.4.200" />
     </div>
-
     <div class="form-sec">Mantenimiento Preventivo</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Último Mantenimiento *</label>
@@ -486,9 +476,40 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
       <button class="btn-primary" id="saveEquipoBtn" onclick="saveEquipo()">Guardar Equipo</button>
       <button class="btn-sec" onclick="closeModal('equipoModal')">Cancelar</button>
     </div>
-    <div id="deleteEquipoZone" style="display:none;margin-top:18px;padding:14px;border:1px solid var(--red-border);background:var(--red-bg);border-radius:var(--r);">
-      <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:var(--red);text-transform:uppercase;margin-bottom:8px;">⚠ Zona Peligrosa</div>
+    <div id="deleteEquipoZone" class="delete-zone" style="display:none">
+      <div class="delete-zone-title">⚠ Zona Peligrosa</div>
       <button class="btn-danger" style="width:100%" onclick="confirmDeleteEquipo()">🗑 Eliminar este Equipo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR ELIMINAR EQUIPO ════════════════════════════ -->
+<div class="modal-overlay" id="confirmDelEquipoModal">
+  <div class="modal">
+    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación</div>
+    <button class="modal-close" onclick="closeModal('confirmDelEquipoModal')">✕</button>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente el equipo:</p>
+    <p id="confirmDelEquipoName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:18px;"></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará el equipo y no se puede deshacer.</p>
+    <div class="btn-row">
+      <button class="btn-danger" id="confirmDelEquipoBtn" onclick="executeDeleteEquipo()">Sí, Eliminar</button>
+      <button class="btn-sec" onclick="closeModal('confirmDelEquipoModal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR ELIMINAR TIENDA ════════════════════════════ -->
+<div class="modal-overlay" id="confirmDelStoreModal">
+  <div class="modal">
+    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación de Tienda</div>
+    <button class="modal-close" onclick="closeModal('confirmDelStoreModal')">✕</button>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente la tienda:</p>
+    <p id="confirmDelStoreName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:8px;"></p>
+    <p id="confirmDelStoreEquipos" style="font-size:11px;color:var(--red);margin-bottom:18px;font-weight:600;"></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará la tienda y todos sus equipos. No se puede deshacer.</p>
+    <div class="btn-row">
+      <button class="btn-danger" id="confirmDelStoreBtn" onclick="executeDeleteStore()">Sí, Eliminar Todo</button>
+      <button class="btn-sec" onclick="closeModal('confirmDelStoreModal')">Cancelar</button>
     </div>
   </div>
 </div>
@@ -499,7 +520,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
     <div class="modal-title" id="maintModalTitle">🔧 Registrar Mantenimiento</div>
     <button class="modal-close" onclick="closeModal('maintModal')">✕</button>
     <input type="hidden" id="maint-equipoId" />
-
     <div class="form-sec">Datos del Mantenimiento</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Fecha de Mantenimiento *</label>
@@ -550,37 +570,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   </div>
 </div>
 
-<!-- ═══ MODAL: CONFIRMAR ELIMINAR EQUIPO ════════════════════════════ -->
-<div class="modal-overlay" id="confirmDelEquipoModal">
-  <div class="modal" style="width:420px">
-    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación</div>
-    <button class="modal-close" onclick="closeModal('confirmDelEquipoModal')">✕</button>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente el equipo:</p>
-    <p id="confirmDelEquipoName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:18px;"></p>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará el equipo y no se puede deshacer.</p>
-    <div class="btn-row">
-      <button class="btn-danger" id="confirmDelEquipoBtn" onclick="executeDeleteEquipo()">Sí, Eliminar</button>
-      <button class="btn-sec" onclick="closeModal('confirmDelEquipoModal')">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL: CONFIRMAR ELIMINAR TIENDA ════════════════════════════ -->
-<div class="modal-overlay" id="confirmDelStoreModal">
-  <div class="modal" style="width:420px">
-    <div class="modal-title" style="color:var(--red)">⚠ Confirmar Eliminación de Tienda</div>
-    <button class="modal-close" onclick="closeModal('confirmDelStoreModal')">✕</button>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">¿Eliminar definitivamente la tienda:</p>
-    <p id="confirmDelStoreName" style="font-weight:800;font-size:17px;color:var(--ftd-navy);margin-bottom:8px;"></p>
-    <p id="confirmDelStoreEquipos" style="font-size:11px;color:var(--red);margin-bottom:18px;font-weight:600;"></p>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:22px;font-weight:500">Esta acción eliminará la tienda y todos sus equipos. No se puede deshacer.</p>
-    <div class="btn-row">
-      <button class="btn-danger" id="confirmDelStoreBtn" onclick="executeDeleteStore()">Sí, Eliminar Todo</button>
-      <button class="btn-sec" onclick="closeModal('confirmDelStoreModal')">Cancelar</button>
-    </div>
-  </div>
-</div>
-
 <!-- ═══ MODAL: NUEVA TIENDA ═════════════════════════════════════════ -->
 <div class="modal-overlay" id="addStoreModal">
   <div class="modal" style="width:480px">
@@ -620,13 +609,9 @@ function parseJwt(token){
     return JSON.parse(jsonPayload);
   } catch(e){ return null; }
 }
-
 function handleCredentialResponse(response){
   const payload = parseJwt(response.credential);
-  if(!payload){
-    showLoginError('Error al procesar la respuesta de Google.');
-    return;
-  }
+  if(!payload){ showLoginError('Error al procesar la respuesta de Google.'); return; }
   const email = payload.email || '';
   if(!email.toLowerCase().endsWith('@'+ALLOWED_DOMAIN)){
     showLoginError(`⚠ Acceso restringido. Debes iniciar sesión con una cuenta @${ALLOWED_DOMAIN}. (${email})`);
@@ -637,20 +622,9 @@ function handleCredentialResponse(response){
   hideLoginError();
   enterApp();
 }
-
-function showLoginError(msg){
-  const el=document.getElementById('loginError');
-  el.textContent=msg;
-  el.classList.add('show');
-}
-function hideLoginError(){document.getElementById('loginError').classList.remove('show');}
-
-function logout(){
-  sessionStorage.removeItem('ftd_user');
-  currentUser=null;
-  location.reload();
-}
-
+function showLoginError(msg){ const el=document.getElementById('loginError'); el.textContent=msg; el.classList.add('show'); }
+function hideLoginError(){ document.getElementById('loginError').classList.remove('show'); }
+function logout(){ sessionStorage.removeItem('ftd_user'); currentUser=null; location.reload(); }
 function renderUserChip(){
   if(!currentUser) return;
   document.getElementById('userChip').style.display='flex';
@@ -662,28 +636,19 @@ function renderUserChip(){
     avatar.textContent=(currentUser.name||currentUser.email||'?')[0].toUpperCase();
   }
 }
-
 function initGoogleLogin(){
-  if(typeof google==='undefined'||!google.accounts){
-    setTimeout(initGoogleLogin,300);
-    return;
-  }
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleCredentialResponse
-  });
+  if(typeof google==='undefined'||!google.accounts){ setTimeout(initGoogleLogin,300); return; }
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse });
   google.accounts.id.renderButton(
     document.getElementById('googleBtnContainer'),
     { theme:'outline', size:'large', width:Math.min(340, window.innerWidth-100), text:'continue_with', shape:'pill' }
   );
 }
-
 function showLogin(){
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('loginScreen').classList.add('show');
   initGoogleLogin();
 }
-
 function enterApp(){
   document.getElementById('loginScreen').classList.remove('show');
   document.getElementById('loadingScreen').style.display='flex';
@@ -705,20 +670,20 @@ function enterApp(){
 // STATE
 // ══════════════════════════════════════════════════════════════════
 let SCRIPT_URL = localStorage.getItem('ftd_script_url') || 'https://script.google.com/macros/s/AKfycbyRvJKnBPsh6pcJwx8RvO8EdBkrcQ2K-oOEmk4FFLWymR3XqEtIgmW2mgQGeprZdsIw/exec';
-let stores  = [];   // [{storeNum, storeName, area, ciudad}]
-let equipos = [];   // [{id, storeNum, tipo, nombre, marca, modelo, serie, ip, lastMaint, freq, estado, obs}]
-let historial = []; // [{id, equipoId, fecha, tecnico, tipo, obs, proximoMaint, estado, registrado}]
+let stores  = [];
+let equipos = [];
+let historial = [];
 let logs = [];
 let activeFilter = 'all';
 let currentStore = null;
 let currentTab   = 'srv';
 let editEquipoId = null;
 let maintEquipoId = null;
+let autoRefreshStarted = false;
 
 const TIPO_LABELS = {srv:'Servidor', caja:'Caja', auto:'Auto Pago', ger:'PC Gerencia'};
 const TIPO_ICONS  = {srv:'🖥', caja:'🛒', auto:'💳', ger:'💼'};
 
-// ── LISTAS PREDEFINIDAS DE NOMBRE Y MODELO POR TIPO DE EQUIPO ────
 const EQUIPO_OPTIONS = {
   srv: {
     nombres: ['Servidor de Tienda'],
@@ -750,18 +715,13 @@ function populateEquipoQuickLists(tipo){
   nombreSel.innerHTML = '<option value="">Seleccionar de la lista...</option>' + opts.nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
   modeloSel.innerHTML = '<option value="">Seleccionar modelo...</option>' + opts.modelos.map(m=>`<option value="${m}">${m}</option>`).join('');
 }
-
 function applyQuickPick(field){
   const sel = document.getElementById(field==='nombre'?'eq-nombreQuick':'eq-modeloQuick');
   const target = document.getElementById(field==='nombre'?'eq-nombre':'eq-modelo');
   const val = sel.value;
   if(!val) return;
-  if(val==='Otra' || val==='Otro'){
-    target.value='';
-    target.focus();
-  } else {
-    target.value=val;
-  }
+  if(val==='Otra' || val==='Otro'){ target.value=''; target.focus(); }
+  else { target.value=val; }
 }
 
 // ── URL ──────────────────────────────────────────────────────────
@@ -773,6 +733,7 @@ function saveScriptUrl(){
   document.getElementById('configBanner').style.display='none';
   addLog('CONFIG','URL guardada','ok');
   loadData();
+  startAutoRefresh();
 }
 
 // ── API ──────────────────────────────────────────────────────────
@@ -795,37 +756,45 @@ function setConn(state,msg){
 }
 
 // ── LOAD DATA ────────────────────────────────────────────────────
-async function loadData(){
-  setConn('loading','Cargando...');
+async function loadData(silent=false){
+  if(!silent) setConn('loading','Cargando...');
   try {
     const [sData, eData, hData] = await Promise.all([
-      apiGet('getStores'),
-      apiGet('getEquipos'),
-      apiGet('getHistorial')
+      apiGet('getStores'), apiGet('getEquipos'), apiGet('getHistorial')
     ]);
-    stores   = sData.stores   || [];
-    equipos  = eData.equipos  || [];
-    historial= hData.historial|| [];
-    // Normalizar storeNum e id a texto SIEMPRE, para evitar fallos de comparación
-    // cuando Google Sheets convierte automáticamente valores numéricos
+    stores    = sData.stores    || [];
+    equipos   = eData.equipos   || [];
+    historial = hData.historial || [];
     stores.forEach(s=>{ s.storeNum=String(s.storeNum||'').trim(); });
     equipos.forEach(e=>{ e.storeNum=String(e.storeNum||'').trim(); e.id=String(e.id||'').trim(); });
     historial.forEach(h=>{ h.equipoId=String(h.equipoId||'').trim(); });
     setConn('ok', `${stores.length} tiendas`);
-    addLog('SHEETS',`${stores.length} tiendas · ${equipos.length} equipos cargados`,'ok');
+    if(!silent) addLog('SHEETS', `${stores.length} tiendas · ${equipos.length} equipos cargados`, 'ok');
     renderFilterBar();
     renderStores();
     renderTimeline();
   } catch(err){
     setConn('err','Sin conexión');
-    addLog('ERROR',err.message,'err');
-    document.getElementById('storesGrid').innerHTML=`<div class="empty-state">⚠️ No se pudo conectar.<br><small>${err.message}</small></div>`;
+    if(!silent){
+      addLog('ERROR', err.message, 'err');
+      document.getElementById('storesGrid').innerHTML = `<div class="empty-state">⚠️ No se pudo conectar.<br><small>${err.message}</small></div>`;
+    }
   } finally {
-    document.getElementById('loadingScreen').style.display='none';
+    if(!silent) document.getElementById('loadingScreen').style.display='none';
   }
 }
+function startAutoRefresh(){
+  if(autoRefreshStarted) return;
+  autoRefreshStarted = true;
+  setInterval(()=>{
+    if(document.querySelector('.modal-overlay.open')) return;
+    loadData(true);
+  }, 60000);
+}
 
-// ── HELPERS ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════════
 function parseDate(raw){
   if(!raw) return null;
   const s = String(raw).trim();
@@ -845,11 +814,7 @@ function nextDateStr(lastMaint, freq){
   d.setDate(d.getDate()+parseInt(freq||90));
   return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'});
 }
-function fmtDate(raw){
-  const d=parseDate(raw);
-  if(!d) return '—';
-  return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'});
-}
+function fmtDate(raw){ const d=parseDate(raw); if(!d) return '—'; return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'}); }
 function equipoStatus(eq){
   if(eq.estado==='critical') return 'critical';
   const days = daysUntil(eq.lastMaint, eq.freq);
@@ -863,8 +828,8 @@ function storeStatus(storeNum){
   if(eqs.some(e=>equipoStatus(e)==='warning')) return 'warning';
   return 'ok';
 }
-function areas(){return[...new Set(stores.map(s=>s.area))].sort((a,b)=>parseInt(a.replace('Area ',''))-parseInt(b.replace('Area ','')));}
-function todayStr(){return new Date().toISOString().split('T')[0];}
+function ciudades(){ return [...new Set(stores.map(s=>s.ciudad).filter(Boolean))].sort(); }
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
 
 // ── FILTER BAR ──────────────────────────────────────────────────
 function renderFilterBar(){
@@ -875,19 +840,19 @@ function renderFilterBar(){
   allBtn.innerHTML=`Todas <span class="filter-count">${stores.length}</span>`;
   allBtn.onclick=()=>setFilter('all');
   bar.appendChild(allBtn);
-  areas().forEach(area=>{
-    const ss=stores.filter(s=>s.area===area);
+  ciudades().forEach(ciudad=>{
+    const ss=stores.filter(s=>s.ciudad===ciudad);
     const hasCrit=ss.some(s=>storeStatus(s.storeNum)==='critical');
     const hasWarn=ss.some(s=>storeStatus(s.storeNum)==='warning');
     const dot=hasCrit?'var(--red)':hasWarn?'var(--amber)':null;
     const btn=document.createElement('button');
-    btn.className='filter-btn'+(activeFilter===area?' active':'');
-    btn.innerHTML=`A${area.replace('Area ','')} <span class="filter-count">${ss.length}</span>${dot?`<span class="alert-dot" style="background:${dot}"></span>`:''}`;
-    btn.onclick=()=>setFilter(area);
+    btn.className='filter-btn'+(activeFilter===ciudad?' active':'');
+    btn.innerHTML=`${ciudad} <span class="filter-count">${ss.length}</span>${dot?`<span class="alert-dot" style="background:${dot}"></span>`:''}`;
+    btn.onclick=()=>setFilter(ciudad);
     bar.appendChild(btn);
   });
 }
-function setFilter(f){activeFilter=f;renderFilterBar();renderStores();}
+function setFilter(f){ activeFilter=f; renderFilterBar(); renderStores(); }
 
 // ── RENDER STORES ────────────────────────────────────────────────
 function renderStores(){
@@ -898,7 +863,6 @@ function renderStores(){
   if(q) filtered=filtered.filter(s=>s.storeName.toLowerCase().includes(q)||s.storeNum.toLowerCase().includes(q)||(s.ciudad||'').toLowerCase().includes(q));
   document.getElementById('activeBadge').textContent=activeFilter==='all'?'Todas las Ciudades':activeFilter;
 
-  // Stats
   const allEqs = equipos;
   document.getElementById('statTiendas').textContent=stores.length||'—';
   document.getElementById('statSrv').textContent=allEqs.filter(e=>e.tipo==='srv').length||'0';
@@ -907,7 +871,7 @@ function renderStores(){
   document.getElementById('statGer').textContent=allEqs.filter(e=>e.tipo==='ger').length||'0';
   document.getElementById('statCrit').textContent=allEqs.filter(e=>equipoStatus(e)==='critical').length||'0';
 
-  if(!filtered.length){grid.innerHTML='<div class="empty-state">🏪<br><br>No se encontraron tiendas.</div>';return;}
+  if(!filtered.length){ grid.innerHTML='<div class="empty-state">🏪<br><br>No se encontraron tiendas.</div>'; return; }
 
   const ciudadesLista=[...new Set(filtered.map(s=>s.ciudad||''))].sort();
   ciudadesLista.forEach(ciudad=>{
@@ -916,7 +880,7 @@ function renderStores(){
     const hasCrit=cs.some(s=>storeStatus(s.storeNum)==='critical');
     const hasWarn=cs.some(s=>storeStatus(s.storeNum)==='warning');
     const dotC=hasCrit?'var(--red)':hasWarn?'var(--amber)':'var(--green)';
-    const hdr=document.createElement('div');hdr.className='area-header';
+    const hdr=document.createElement('div'); hdr.className='area-header';
     hdr.innerHTML=`<span class="area-label">${ciudad}</span><span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;display:inline-block"></span><span class="area-line"></span><span class="area-count">${cs.length} tiendas</span>`;
     grid.appendChild(hdr);
     cs.forEach(s=>renderStoreCard(s,grid));
@@ -929,14 +893,10 @@ function renderStoreCard(s,grid){
   const tipos=['srv','caja','auto','ger'];
   const card=document.createElement('div');
   card.className='store-card';
-  card.style.position='relative';
-
-  // Header class
   const hdrClass=status==='critical'?'critical':status==='warning'?'warning':'';
 
-  // Próximo mantenimiento más urgente
   let minDays=999, nextEq=null;
-  eqs.forEach(e=>{const d=daysUntil(e.lastMaint,e.freq);if(d<minDays){minDays=d;nextEq=e;}});
+  eqs.forEach(e=>{ const d=daysUntil(e.lastMaint,e.freq); if(d<minDays){minDays=d;nextEq=e;} });
 
   const pillsHtml=tipos.map(t=>{
     const tEqs=eqs.filter(e=>e.tipo===t);
@@ -961,7 +921,7 @@ function renderStoreCard(s,grid){
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="store-status-badge">${status==='critical'?'🔴 CRÍTICO':status==='warning'?'⚠️ ATENCIÓN':'✅ ÓPTIMO'}</div>
-        <button onclick="openConfirmDelStore('${s.storeNum}');event.stopPropagation()" title="Eliminar tienda" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;width:24px;height:24px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;line-height:1">✕</button>
+        <button class="store-del-btn" onclick="openConfirmDelStore('${s.storeNum}');event.stopPropagation()" title="Eliminar tienda">✕</button>
       </div>
     </div>
     <div class="store-card-body">
@@ -993,10 +953,7 @@ function renderTimeline(){
     return`<div class="timeline-item">
       <div class="tl-date" style="font-size:8px">${nd.split(' ').slice(0,2).join(' ')}</div>
       <div class="tl-dot" style="background:${c}"></div>
-      <div class="tl-content">
-        <div class="tl-server">${eq.nombre}</div>
-        <div class="tl-type">${s?s.storeName:'?'} · ${TIPO_LABELS[eq.tipo]||eq.tipo}</div>
-      </div>
+      <div class="tl-content"><div class="tl-server">${eq.nombre}</div><div class="tl-type">${s?s.storeName:'?'} · ${TIPO_LABELS[eq.tipo]||eq.tipo}</div></div>
       <div class="tl-urgency" style="background:${ubg};color:${uc};border:1px solid ${uc}">${u}</div>
     </div>`;
   }).join('') || '<div style="font-size:11px;color:var(--muted);padding:10px 0">Sin equipos registrados</div>';
@@ -1007,19 +964,15 @@ function openStoreDetail(storeNum){
   currentStore=stores.find(s=>s.storeNum===storeNum);
   if(!currentStore) return;
   currentTab='srv';
-
   document.getElementById('storeModalTitle').textContent=currentStore.storeName;
-  document.getElementById('storeModalMeta').textContent=`#${currentStore.storeNum} · ${currentStore.ciudad||''} · ${currentStore.area}`;
-
+  document.getElementById('storeModalMeta').textContent=`#${currentStore.storeNum} · ${currentStore.ciudad||''}`;
   const status=storeStatus(storeNum);
   const hdr=document.getElementById('storeModalHeader');
   hdr.className='store-modal-header'+(status==='critical'?' critical':status==='warning'?' warning':'');
-
   renderEquipoTabs();
   renderEquipos();
   openModal('storeModal');
 }
-
 function renderEquipoTabs(){
   ['srv','caja','auto','ger'].forEach(t=>{
     const count=equipos.filter(e=>e.storeNum===currentStore.storeNum&&e.tipo===t).length;
@@ -1027,18 +980,15 @@ function renderEquipoTabs(){
     document.getElementById('tab-'+t).className='equipo-tab'+(currentTab===t?' active':'');
   });
 }
-function switchTab(t){currentTab=t;renderEquipoTabs();renderEquipos();}
-
+function switchTab(t){ currentTab=t; renderEquipoTabs(); renderEquipos(); }
 function renderEquipos(){
   const container=document.getElementById('equiposListContainer');
   const eqs=equipos.filter(e=>e.storeNum===currentStore.storeNum&&e.tipo===currentTab);
   document.getElementById('addEquipoBtn').textContent=`+ Agregar ${TIPO_ICONS[currentTab]} ${TIPO_LABELS[currentTab]}`;
-
   if(!eqs.length){
     container.innerHTML=`<div style="text-align:center;padding:30px;color:var(--muted);font-size:11px;font-weight:500">No hay ${TIPO_LABELS[currentTab].toLowerCase()}s registrados.<br>Haz clic en el botón para agregar.</div>`;
     return;
   }
-
   container.innerHTML=eqs.map(eq=>{
     const st=equipoStatus(eq);
     const days=daysUntil(eq.lastMaint,eq.freq);
@@ -1063,6 +1013,80 @@ function renderEquipos(){
       </div>
     </div>`;
   }).join('');
+}
+
+// ── ADD / EDIT EQUIPO ────────────────────────────────────────────
+function openAddEquipoModal(){
+  editEquipoId=null;
+  document.getElementById('equipoModalTitle').textContent=`+ Nuevo ${TIPO_ICONS[currentTab]} ${TIPO_LABELS[currentTab]}`;
+  ['eq-id','eq-nombre','eq-modelo','eq-serie','eq-ip','eq-obs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('eq-tipoSel').value=currentTab;
+  document.getElementById('eq-lastMaint').value=todayStr();
+  document.getElementById('eq-freq').value=90;
+  document.getElementById('eq-estado').value='ok';
+  document.getElementById('deleteEquipoZone').style.display='none';
+  populateEquipoQuickLists(currentTab);
+  closeModal('storeModal');
+  openModal('equipoModal');
+}
+function openEditEquipo(id){
+  const eq=equipos.find(e=>String(e.id)===String(id));
+  if(!eq) return;
+  editEquipoId=id;
+  document.getElementById('equipoModalTitle').textContent=`✏️ Editar: ${eq.nombre}`;
+  document.getElementById('eq-id').value=eq.id;
+  document.getElementById('eq-tipoSel').value=eq.tipo;
+  populateEquipoQuickLists(eq.tipo);
+  document.getElementById('eq-nombre').value=eq.nombre;
+  document.getElementById('eq-modelo').value=eq.modelo||'';
+  document.getElementById('eq-serie').value=eq.serie||'';
+  document.getElementById('eq-ip').value=eq.ip||'';
+  document.getElementById('eq-lastMaint').value=String(eq.lastMaint||'').substring(0,10)||todayStr();
+  document.getElementById('eq-freq').value=eq.freq||90;
+  document.getElementById('eq-estado').value=eq.estado||'ok';
+  document.getElementById('eq-obs').value=eq.obs||'';
+  document.getElementById('deleteEquipoZone').style.display='block';
+  closeModal('storeModal');
+  openModal('equipoModal');
+}
+function updateEqTipo(){ currentTab=document.getElementById('eq-tipoSel').value; populateEquipoQuickLists(currentTab); }
+
+async function saveEquipo(){
+  const nombre=document.getElementById('eq-nombre').value.trim();
+  if(!nombre){alert('El nombre es obligatorio');return;}
+  const btn=document.getElementById('saveEquipoBtn');
+  btn.disabled=true;btn.textContent='Guardando...';
+  const eq={
+    id: editEquipoId||String(Date.now()),
+    storeNum: String(currentStore.storeNum),
+    tipo: document.getElementById('eq-tipoSel').value,
+    nombre,
+    modelo: document.getElementById('eq-modelo').value.trim(),
+    serie: document.getElementById('eq-serie').value.trim(),
+    ip: document.getElementById('eq-ip').value.trim(),
+    lastMaint: document.getElementById('eq-lastMaint').value,
+    freq: parseInt(document.getElementById('eq-freq').value)||90,
+    estado: document.getElementById('eq-estado').value,
+    obs: document.getElementById('eq-obs').value.trim()
+  };
+  try {
+    await apiPost({action:'saveEquipo',equipo:eq});
+    const idx=equipos.findIndex(e=>String(e.id)===String(eq.id));
+    if(idx>=0) equipos[idx]=eq; else equipos.push(eq);
+    addLog(currentStore.storeName,`${editEquipoId?'Actualizado':'Agregado'}: ${eq.nombre} (${TIPO_LABELS[eq.tipo]})`,'ok');
+    closeModal('equipoModal');
+    currentTab=eq.tipo;
+    renderEquipoTabs();
+    renderEquipos();
+    renderStores();
+    renderTimeline();
+    openModal('storeModal');
+  } catch(err){
+    addLog('ERROR',err.message,'err');
+    alert('Error: '+err.message);
+  } finally {
+    btn.disabled=false;btn.textContent='Guardar Equipo';
+  }
 }
 
 // ── DELETE EQUIPO ────────────────────────────────────────────────
@@ -1110,12 +1134,8 @@ async function executeDeleteStore(){
   const storeNum=btn.dataset.storeNum;
   btn.disabled=true;btn.textContent='Eliminando...';
   try {
-    // Eliminar equipos de la tienda primero
     const storeEquipos=equipos.filter(e=>e.storeNum===storeNum);
-    for(const eq of storeEquipos){
-      await apiPost({action:'deleteEquipo',id:eq.id});
-    }
-    // Eliminar la tienda
+    for(const eq of storeEquipos){ await apiPost({action:'deleteEquipo',id:eq.id}); }
     await apiPost({action:'deleteStore',storeNum});
     const s=stores.find(x=>x.storeNum===storeNum);
     stores=stores.filter(x=>x.storeNum!==storeNum);
@@ -1133,80 +1153,6 @@ async function executeDeleteStore(){
   }
 }
 
-// ── ADD / EDIT EQUIPO ────────────────────────────────────────────
-function openAddEquipoModal(){
-  editEquipoId=null;
-  document.getElementById('equipoModalTitle').textContent=`+ Nuevo ${TIPO_ICONS[currentTab]} ${TIPO_LABELS[currentTab]}`;
-  ['eq-id','eq-nombre','eq-marca','eq-modelo','eq-serie','eq-ip','eq-obs'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('eq-tipoSel').value=currentTab;
-  document.getElementById('eq-lastMaint').value=todayStr();
-  document.getElementById('eq-freq').value=90;
-  document.getElementById('eq-estado').value='ok';
-  document.getElementById('deleteEquipoZone').style.display='none';
-  closeModal('storeModal');
-  openModal('equipoModal');
-}
-function openEditEquipo(id){
-  const eq=equipos.find(e=>String(e.id)===String(id));
-  if(!eq) return;
-  editEquipoId=id;
-  document.getElementById('equipoModalTitle').textContent=`✏️ Editar: ${eq.nombre}`;
-  document.getElementById('eq-id').value=eq.id;
-  document.getElementById('eq-tipoSel').value=eq.tipo;
-  document.getElementById('eq-nombre').value=eq.nombre;
-  document.getElementById('eq-marca').value=eq.marca||'';
-  document.getElementById('eq-modelo').value=eq.modelo||'';
-  document.getElementById('eq-serie').value=eq.serie||'';
-  document.getElementById('eq-ip').value=eq.ip||'';
-  document.getElementById('eq-lastMaint').value=String(eq.lastMaint||'').substring(0,10)||todayStr();
-  document.getElementById('eq-freq').value=eq.freq||90;
-  document.getElementById('eq-estado').value=eq.estado||'ok';
-  document.getElementById('eq-obs').value=eq.obs||'';
-  closeModal('storeModal');
-  openModal('equipoModal');
-}
-function updateEqTipo(){currentTab=document.getElementById('eq-tipoSel').value;}
-
-async function saveEquipo(){
-  const nombre=document.getElementById('eq-nombre').value.trim();
-  if(!nombre){alert('El nombre es obligatorio');return;}
-  const btn=document.getElementById('saveEquipoBtn');
-  btn.disabled=true;btn.textContent='Guardando...';
-
-  const eq={
-    id: editEquipoId||String(Date.now()),
-    storeNum: String(currentStore.storeNum),
-    tipo: document.getElementById('eq-tipoSel').value,
-    nombre,
-    modelo: document.getElementById('eq-modelo').value.trim(),
-    serie: document.getElementById('eq-serie').value.trim(),
-    ip: document.getElementById('eq-ip').value.trim(),
-    lastMaint: document.getElementById('eq-lastMaint').value,
-    freq: parseInt(document.getElementById('eq-freq').value)||90,
-    estado: document.getElementById('eq-estado').value,
-    obs: document.getElementById('eq-obs').value.trim()
-  };
-
-  try {
-    await apiPost({action:'saveEquipo',equipo:eq});
-    const idx=equipos.findIndex(e=>String(e.id)===String(eq.id));
-    if(idx>=0) equipos[idx]=eq; else equipos.push(eq);
-    addLog(currentStore.storeName,`${editEquipoId?'Actualizado':'Agregado'}: ${eq.nombre} (${TIPO_LABELS[eq.tipo]})`,'ok');
-    closeModal('equipoModal');
-    currentTab=eq.tipo;
-    renderEquipoTabs();
-    renderEquipos();
-    renderStores();
-    renderTimeline();
-    openModal('storeModal');
-  } catch(err){
-    addLog('ERROR',err.message,'err');
-    alert('Error: '+err.message);
-  } finally {
-    btn.disabled=false;btn.textContent='Guardar Equipo';
-  }
-}
-
 // ── MANTENIMIENTO ────────────────────────────────────────────────
 function openMaintModal(equipoId){
   maintEquipoId=equipoId;
@@ -1218,20 +1164,16 @@ function openMaintModal(equipoId){
   document.getElementById('maint-obs').value='';
   document.getElementById('maint-tipo').value='Preventivo';
   document.getElementById('maint-estado').value='ok';
-  // Sugerir próximo mantenimiento
-  const eq2=equipos.find(e=>String(e.id)===String(equipoId));
-  if(eq2){const d=new Date();d.setDate(d.getDate()+(parseInt(eq2.freq)||90));document.getElementById('maint-proximo').value=d.toISOString().split('T')[0];}
+  if(eq){ const d=new Date(); d.setDate(d.getDate()+(parseInt(eq.freq)||90)); document.getElementById('maint-proximo').value=d.toISOString().split('T')[0]; }
   closeModal('storeModal');
   openModal('maintModal');
 }
-
 async function saveMantenimiento(){
   const fecha=document.getElementById('maint-fecha').value;
   const tecnico=document.getElementById('maint-tecnico').value.trim();
   if(!fecha||!tecnico){alert('Fecha y técnico son obligatorios');return;}
   const btn=document.getElementById('saveMaintBtn');
   btn.disabled=true;btn.textContent='Guardando...';
-
   const reg={
     id: Date.now(),
     equipoId: String(maintEquipoId),
@@ -1243,11 +1185,9 @@ async function saveMantenimiento(){
     estado: document.getElementById('maint-estado').value,
     registrado: new Date().toISOString()
   };
-
   try {
     await apiPost({action:'saveHistorial',registro:reg});
     historial.push(reg);
-    // Actualizar lastMaint y estado del equipo
     const eq=equipos.find(e=>String(e.id)===String(maintEquipoId));
     if(eq){
       if(fecha>=(eq.lastMaint||'')) eq.lastMaint=fecha;
@@ -1278,7 +1218,7 @@ function openHistModal(equipoId){
   document.getElementById('histModalTitle').textContent=`📋 Historial — ${eq?eq.nombre:'Equipo'}`;
   const regs=historial.filter(h=>h.equipoId===String(equipoId)).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
   const list=document.getElementById('histList');
-  if(!regs.length){list.innerHTML='<div class="hist-empty">Sin mantenimientos registrados</div>';openModal('histModal');return;}
+  if(!regs.length){ list.innerHTML='<div class="hist-empty">Sin mantenimientos registrados</div>'; openModal('histModal'); return; }
   list.innerHTML=regs.map(r=>`
     <div class="hist-item">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -1294,7 +1234,7 @@ function openHistModal(equipoId){
 }
 
 // ── NUEVA TIENDA ─────────────────────────────────────────────────
-function openAddStoreModal(){openModal('addStoreModal');}
+function openAddStoreModal(){ openModal('addStoreModal'); }
 async function saveNewStore(){
   const num=document.getElementById('st-num').value.trim();
   const name=document.getElementById('st-name').value.trim();
@@ -1312,8 +1252,8 @@ async function saveNewStore(){
 }
 
 // ── MODALS ──────────────────────────────────────────────────────
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
 // ── LOG ─────────────────────────────────────────────────────────
 function addLog(name,msg,type){
@@ -1324,27 +1264,27 @@ function addLog(name,msg,type){
 }
 
 // ── CLOCK ────────────────────────────────────────────────────────
-function tick(){document.getElementById('clock').textContent=new Date().toLocaleString('es',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'}).toUpperCase();}
+function tick(){ document.getElementById('clock').textContent=new Date().toLocaleString('es',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'}).toUpperCase(); }
 
 // ── EXPORT EXCEL ─────────────────────────────────────────────────
 function exportExcel(){
   const today=new Date().toISOString().split('T')[0];
-  const data=[['Área','Ciudad','# Tienda','Nombre Tienda','Tipo Equipo','Nombre Equipo','Marca','Modelo','Serie','IP','Último Mant.','Próx. Mant.','Días','Estado']];
+  const data=[['Ciudad','# Tienda','Nombre Tienda','Tipo Equipo','Nombre Equipo','Modelo','Serie','IP','Último Mant.','Próx. Mant.','Días','Estado']];
   stores.forEach(s=>{
     const eqs=equipos.filter(e=>e.storeNum===s.storeNum);
-    if(!eqs.length){data.push([s.area,s.ciudad,s.storeNum,s.storeName,'—','Sin equipos','','','','','','','','']);return;}
+    if(!eqs.length){ data.push([s.ciudad,s.storeNum,s.storeName,'—','Sin equipos','','','','','','','']); return; }
     eqs.forEach(eq=>{
       const days=daysUntil(eq.lastMaint,eq.freq);
-      data.push([s.area,s.ciudad,s.storeNum,s.storeName,TIPO_LABELS[eq.tipo]||eq.tipo,eq.nombre,eq.marca||'',eq.modelo||'',eq.serie||'',eq.ip||'',eq.lastMaint||'',nextDateStr(eq.lastMaint,eq.freq),days===999?'—':days,equipoStatus(eq).toUpperCase()]);
+      data.push([s.ciudad,s.storeNum,s.storeName,TIPO_LABELS[eq.tipo]||eq.tipo,eq.nombre,eq.modelo||'',eq.serie||'',eq.ip||'',eq.lastMaint||'',nextDateStr(eq.lastMaint,eq.freq),days===999?'—':days,equipoStatus(eq).toUpperCase()]);
     });
   });
   const ws=XLSX.utils.aoa_to_sheet(data);
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Equipos');
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Equipos');
   XLSX.writeFile(wb,`farmatodo_equipos_${today}.xlsx`);
   addLog('EXPORT','Excel generado','ok');
 }
 
-// ── EXPORT PDF ────────────────────────────────────────────────────
+// ── EXPORT PDF ─────────────────────────────────────────────────────
 function exportPDF(){
   const today=new Date().toLocaleDateString('es',{day:'2-digit',month:'long',year:'numeric'});
   const crits=equipos.filter(e=>equipoStatus(e)==='critical');
@@ -1369,12 +1309,12 @@ tr:nth-child(even) td{background:#f8fbff;}
 ${crits.length?`<h2>Equipos Críticos (${crits.length})</h2><table><thead><tr><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Último Mant.</th><th>Días</th><th>Estado</th></tr></thead><tbody>${crits.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${e.lastMaint||'—'}</td><td style="color:#c0001a;font-weight:700">${d<=0?'Vencido':d+'d'}</td><td><span class="bcrit">Crítico</span></td></tr>`;}).join('')}</tbody></table>`:''}
 ${warns.length?`<h2>Equipos en Atención (${warns.length})</h2><table><thead><tr><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Último Mant.</th><th>Días</th></tr></thead><tbody>${warns.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${e.lastMaint||'—'}</td><td style="color:#c47900;font-weight:700">${d}d</td></tr>`;}).join('')}</tbody></table>`:''}
 <h2>Todos los Equipos</h2>
-<table><thead><tr><th>Área</th><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Marca/Modelo</th><th>Serie</th><th>Último Mant.</th><th>Días</th><th>Estado</th></tr></thead><tbody>
-${equipos.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const st=equipoStatus(e);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.area:''}</td><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${[e.marca,e.modelo].filter(Boolean).join(' ')||'—'}</td><td>${e.serie||'—'}</td><td>${e.lastMaint||'—'}</td><td style="font-weight:700;color:${st==='critical'?'#c0001a':st==='warning'?'#c47900':'#00875a'}">${d===999?'—':d<=0?'Vencido':d+'d'}</td><td><span class="${st==='ok'?'bok':st==='warning'?'bwarn':'bcrit'}">${st==='ok'?'Operativo':st==='warning'?'Atención':'Crítico'}</span></td></tr>`;}).join('')}
+<table><thead><tr><th>Ciudad</th><th>Tienda</th><th>Tipo</th><th>Equipo</th><th>Modelo</th><th>Serie</th><th>Último Mant.</th><th>Días</th><th>Estado</th></tr></thead><tbody>
+${equipos.map(e=>{const s=stores.find(x=>x.storeNum===e.storeNum);const st=equipoStatus(e);const d=daysUntil(e.lastMaint,e.freq);return`<tr><td>${s?s.ciudad:''}</td><td>${s?s.storeName:e.storeNum}</td><td>${TIPO_LABELS[e.tipo]||e.tipo}</td><td>${e.nombre}</td><td>${e.modelo||'—'}</td><td>${e.serie||'—'}</td><td>${e.lastMaint||'—'}</td><td style="font-weight:700;color:${st==='critical'?'#c0001a':st==='warning'?'#c47900':'#00875a'}">${d===999?'—':d<=0?'Vencido':d+'d'}</td><td><span class="${st==='ok'?'bok':st==='warning'?'bwarn':'bcrit'}">${st==='ok'?'Operativo':st==='warning'?'Atención':'Crítico'}</span></td></tr>`;}).join('')}
 </tbody></table>
-<div class="footer"><span>FARMATODO · GESTIÓN DE EQUIPOS</span><span>${new Date().toLocaleString('es')}</span></div>
+<div class="footer"><span>FARMATODO · MANTENIMIENTOS DE EQUIPOS</span><span>${new Date().toLocaleString('es')}</span></div>
 </div><script>window.onload=()=>window.print()<\/script></body></html>`;
-  const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();}
+  const w=window.open('','_blank'); if(w){ w.document.write(html); w.document.close(); }
   addLog('EXPORT','PDF generado','ok');
 }
 
