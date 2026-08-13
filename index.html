@@ -376,7 +376,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 
 <!-- FILTER + SEARCH -->
 <div class="filter-wrap">
-  <div class="filter-bar" id="filterBar"><div class="filter-label">Área</div></div>
+  <div class="filter-bar" id="filterBar"><div class="filter-label">Ciudad</div></div>
   <div class="search-wrap">
     <input class="search-input" id="searchInput" placeholder="🔍  Buscar tienda, ciudad..." oninput="renderStores()" />
   </div>
@@ -387,7 +387,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
   <div class="stores-panel">
     <div class="panel-header">
       <div class="panel-title">Tiendas</div>
-      <div class="active-badge" id="activeBadge">Todas las Áreas</div>
+      <div class="active-badge" id="activeBadge">Todas las Ciudades</div>
     </div>
     <div class="stores-grid" id="storesGrid">
       <div class="empty-state">Cargando datos desde Google Sheets...</div>
@@ -447,16 +447,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
         </select>
       </div>
       <div class="form-group"><label class="form-label">Nombre / Ubicación *</label>
+        <select class="form-select" id="eq-nombreQuick" style="margin-bottom:6px" onchange="applyQuickPick('nombre')"></select>
         <input class="form-input" id="eq-nombre" placeholder="ej. Caja 1, Auto Pago 3" />
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Marca</label>
-        <input class="form-input" id="eq-marca" placeholder="ej. HP, Dell, Zebra" />
-      </div>
-      <div class="form-group"><label class="form-label">Modelo</label>
-        <input class="form-input" id="eq-modelo" placeholder="ej. EliteDesk 800" />
-      </div>
+    <div class="form-group">
+      <label class="form-label">Modelo</label>
+      <select class="form-select" id="eq-modeloQuick" style="margin-bottom:6px" onchange="applyQuickPick('modelo')"></select>
+      <input class="form-input" id="eq-modelo" placeholder="ej. OPTIPLEX 3070" />
     </div>
     <div class="form-group"><label class="form-label">Número de Serie</label>
       <input class="form-input" id="eq-serie" placeholder="ej. SN123456789" />
@@ -720,6 +718,52 @@ let maintEquipoId = null;
 const TIPO_LABELS = {srv:'Servidor', caja:'Caja', auto:'Auto Pago', ger:'PC Gerencia'};
 const TIPO_ICONS  = {srv:'🖥', caja:'🛒', auto:'💳', ger:'💼'};
 
+// ── LISTAS PREDEFINIDAS DE NOMBRE Y MODELO POR TIPO DE EQUIPO ────
+const EQUIPO_OPTIONS = {
+  srv: {
+    nombres: ['Servidor de Tienda'],
+    modelos: ['Dell PowerEdge R230','Dell PowerEdge R240','Dell PowerEdge R250','Dell PowerEdge R320','Dell PowerEdge R330','Dell PowerEdge R430','Dell PowerEdge R450','Dell PowerEdge R340','Dell PowerEdge T430','Dell PowerEdge R530','Dell PowerEdge R620','HP ProLiant DL20 Gen10','QNAP TS-873AEU-EP-4G','Dell PowerEdge T320','Dell PowerEdge R360','Lenovo SR250 V3','Otro']
+  },
+  caja: {
+    nombres: ['Caja 1','Caja 2','Caja 3','Caja 4','Caja 5','Caja 6','Caja 7','Caja 8','Caja 9','Caja 10','Caja 96','Caja 97','Caja 98'],
+    modelos: ['3nstar','NCR XR7','NCR XR6','OPTIPLEX 3000','OPTIPLEX 3020','OPTIPLEX 3040','OPTIPLEX 3050','OPTIPLEX 3060','OPTIPLEX 3070','OPTIPLEX 3080','OPTIPLEX 3090','OPTIPLEX 7010','OPTIPLEX 7020','Otra']
+  },
+  auto: {
+    nombres: ['Auto Pago 11','Auto Pago 12','Auto Pago 13','Auto Pago 14','Auto Pago 15','Auto Pago 16','Auto Pago 17'],
+    modelos: ['Glory','Electronica','3nstar','NCR','Dell Optiplex','Otro']
+  },
+  ger: {
+    nombres: ['PC Gerencia principal','PC Gerencia Rack','PC Gerencia Farmacia'],
+    modelos: ['Optiplex 390','OPTIPLEX 3000','Optiplex 3040','Optiplex 3050','Optiplex 3060','Optiplex 3070','Optiplex 3080','Optiplex 3090','Optiplex 7010','Optiplex 7020','Nuc','Beelink','Dell Vostro','Otra']
+  }
+};
+
+function populateEquipoQuickLists(tipo){
+  const opts = EQUIPO_OPTIONS[tipo];
+  const nombreSel = document.getElementById('eq-nombreQuick');
+  const modeloSel = document.getElementById('eq-modeloQuick');
+  if(!opts){
+    nombreSel.innerHTML = '<option value="">— Sin lista, escribe libremente abajo —</option>';
+    modeloSel.innerHTML = '<option value="">— Sin lista, escribe libremente abajo —</option>';
+    return;
+  }
+  nombreSel.innerHTML = '<option value="">Seleccionar de la lista...</option>' + opts.nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
+  modeloSel.innerHTML = '<option value="">Seleccionar modelo...</option>' + opts.modelos.map(m=>`<option value="${m}">${m}</option>`).join('');
+}
+
+function applyQuickPick(field){
+  const sel = document.getElementById(field==='nombre'?'eq-nombreQuick':'eq-modeloQuick');
+  const target = document.getElementById(field==='nombre'?'eq-nombre':'eq-modelo');
+  const val = sel.value;
+  if(!val) return;
+  if(val==='Otra' || val==='Otro'){
+    target.value='';
+    target.focus();
+  } else {
+    target.value=val;
+  }
+}
+
 // ── URL ──────────────────────────────────────────────────────────
 function saveScriptUrl(){
   const url = document.getElementById('scriptUrlInput').value.trim();
@@ -850,9 +894,9 @@ function renderStores(){
   const grid=document.getElementById('storesGrid');
   grid.innerHTML='';
   const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  let filtered=activeFilter==='all'?[...stores]:stores.filter(s=>s.area===activeFilter);
+  let filtered=activeFilter==='all'?[...stores]:stores.filter(s=>s.ciudad===activeFilter);
   if(q) filtered=filtered.filter(s=>s.storeName.toLowerCase().includes(q)||s.storeNum.toLowerCase().includes(q)||(s.ciudad||'').toLowerCase().includes(q));
-  document.getElementById('activeBadge').textContent=activeFilter==='all'?'Todas las Áreas':activeFilter;
+  document.getElementById('activeBadge').textContent=activeFilter==='all'?'Todas las Ciudades':activeFilter;
 
   // Stats
   const allEqs = equipos;
@@ -865,16 +909,15 @@ function renderStores(){
 
   if(!filtered.length){grid.innerHTML='<div class="empty-state">🏪<br><br>No se encontraron tiendas.</div>';return;}
 
-  const ciudades=[...new Set(filtered.map(s=>s.ciudad||''))].sort();
-  ciudades.forEach(ciudad=>{
+  const ciudadesLista=[...new Set(filtered.map(s=>s.ciudad||''))].sort();
+  ciudadesLista.forEach(ciudad=>{
     const cs=filtered.filter(s=>(s.ciudad||'')===ciudad);
     if(!cs.length) return;
     const hasCrit=cs.some(s=>storeStatus(s.storeNum)==='critical');
     const hasWarn=cs.some(s=>storeStatus(s.storeNum)==='warning');
     const dotC=hasCrit?'var(--red)':hasWarn?'var(--amber)':'var(--green)';
-    const aLab=activeFilter==='all'&&cs[0]?.area?` · ${cs[0].area}`:'';
     const hdr=document.createElement('div');hdr.className='area-header';
-    hdr.innerHTML=`<span class="area-label">${ciudad}${aLab}</span><span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;display:inline-block"></span><span class="area-line"></span><span class="area-count">${cs.length} tiendas</span>`;
+    hdr.innerHTML=`<span class="area-label">${ciudad}</span><span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;display:inline-block"></span><span class="area-line"></span><span class="area-count">${cs.length} tiendas</span>`;
     grid.appendChild(hdr);
     cs.forEach(s=>renderStoreCard(s,grid));
   });
@@ -1005,7 +1048,7 @@ function renderEquipos(){
       <div style="font-size:20px;flex-shrink:0">${TIPO_ICONS[eq.tipo]||'💻'}</div>
       <div class="equipo-info">
         <div class="equipo-name">${eq.nombre}</div>
-        <div class="equipo-detail">${[eq.marca,eq.modelo].filter(Boolean).join(' ')}${eq.serie?` · SN: ${eq.serie}`:''}</div>
+        <div class="equipo-detail">${eq.modelo||''}${eq.serie?` · SN: ${eq.serie}`:''}</div>
         <div class="equipo-badges">
           <span class="badge badge-${st==='ok'?'ok':st==='warning'?'warn':'crit'}">${st==='ok'?'Operativo':st==='warning'?'Atención':'Crítico'}</span>
           ${eq.ip?`<span class="badge badge-info">${eq.ip}</span>`:''}
@@ -1135,7 +1178,6 @@ async function saveEquipo(){
     storeNum: String(currentStore.storeNum),
     tipo: document.getElementById('eq-tipoSel').value,
     nombre,
-    marca: document.getElementById('eq-marca').value.trim(),
     modelo: document.getElementById('eq-modelo').value.trim(),
     serie: document.getElementById('eq-serie').value.trim(),
     ip: document.getElementById('eq-ip').value.trim(),
