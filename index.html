@@ -459,7 +459,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
         <input class="form-input" id="eq-lastMaint" type="date" />
       </div>
       <div class="form-group"><label class="form-label">Frecuencia (días)</label>
-        <input class="form-input" id="eq-freq" type="number" value="90" min="7" />
+        <input class="form-input" id="eq-freq" type="number" value="180" min="7" />
       </div>
     </div>
     <div class="form-group"><label class="form-label">Estado</label>
@@ -1026,7 +1026,7 @@ function openAddEquipoModal(){
   ['eq-id','eq-nombre','eq-modelo','eq-serie','eq-ip','eq-obs'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('eq-tipoSel').value=currentTab;
   document.getElementById('eq-lastMaint').value=todayStr();
-  document.getElementById('eq-freq').value=90;
+  document.getElementById('eq-freq').value=180;
   document.getElementById('eq-estado').value='ok';
   document.getElementById('deleteEquipoZone').style.display='none';
   populateEquipoQuickLists(currentTab);
