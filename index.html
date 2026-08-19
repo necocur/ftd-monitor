@@ -580,15 +580,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
       <div class="form-group"><label class="form-label"># Tienda *</label><input class="form-input" id="st-num" placeholder="ej. 1004" /></div>
       <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="st-name" placeholder="ej. Cedritos1" /></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Área</label>
-        <select class="form-select" id="st-area">
-          <option>Area 1</option><option>Area 2</option><option>Area 3</option><option>Area 4</option><option>Area 5</option>
-          <option>Area 6</option><option>Area 7</option><option>Area 8</option><option>Area 9</option><option>Area 10</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="st-ciudad" placeholder="ej. Bogotá" /></div>
-    </div>
+    <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="st-ciudad" placeholder="ej. Bogotá" /></div>
     <div class="btn-row"><button class="btn-primary" id="saveStoreBtn" onclick="saveNewStore()">Crear Tienda</button></div>
   </div>
 </div>
@@ -737,14 +729,15 @@ function saveScriptUrl(){
 }
 
 // ── API ──────────────────────────────────────────────────────────
+const API_KEY = 'ftd_x7k9m2p4q8w3n5r1';
 async function apiGet(action){
-  const res = await fetch(`${SCRIPT_URL}?action=${action}`,{redirect:'follow'});
+  const res = await fetch(`${SCRIPT_URL}?action=${action}&key=${API_KEY}`,{redirect:'follow'});
   const data = await res.json();
   if(data.error) throw new Error(data.error);
   return data;
 }
 async function apiPost(body){
-  const res = await fetch(SCRIPT_URL,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
+  const res = await fetch(SCRIPT_URL,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...body, key:API_KEY})});
   const data = await res.json();
   if(data.error) throw new Error(data.error);
   return data;
@@ -831,6 +824,17 @@ function storeStatus(storeNum){
 function ciudades(){ return [...new Set(stores.map(s=>s.ciudad).filter(Boolean))].sort(); }
 function todayStr(){ return new Date().toISOString().split('T')[0]; }
 
+// ── SEGURIDAD: escapar texto antes de insertarlo en HTML (previene XSS) ──
+function escapeHtml(str){
+  if(str===null||str===undefined) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
 // ── FILTER BAR ──────────────────────────────────────────────────
 function renderFilterBar(){
   const bar=document.getElementById('filterBar');
@@ -916,8 +920,8 @@ function renderStoreCard(s,grid){
   card.innerHTML=`
     <div class="store-card-header ${hdrClass}">
       <div style="flex:1">
-        <div class="store-title">${s.storeName}</div>
-        <div class="store-meta">#${s.storeNum} · ${s.ciudad||''} · ${eqs.length} equipos</div>
+        <div class="store-title">${escapeHtml(s.storeName)}</div>
+        <div class="store-meta">#${escapeHtml(s.storeNum)} · ${escapeHtml(s.ciudad||'')} · ${eqs.length} equipos</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="store-status-badge">${status==='critical'?'🔴 CRÍTICO':status==='warning'?'⚠️ ATENCIÓN':'✅ ÓPTIMO'}</div>
@@ -953,7 +957,7 @@ function renderTimeline(){
     return`<div class="timeline-item">
       <div class="tl-date" style="font-size:8px">${nd.split(' ').slice(0,2).join(' ')}</div>
       <div class="tl-dot" style="background:${c}"></div>
-      <div class="tl-content"><div class="tl-server">${eq.nombre}</div><div class="tl-type">${s?s.storeName:'?'} · ${TIPO_LABELS[eq.tipo]||eq.tipo}</div></div>
+      <div class="tl-content"><div class="tl-server">${escapeHtml(eq.nombre)}</div><div class="tl-type">${s?escapeHtml(s.storeName):'?'} · ${TIPO_LABELS[eq.tipo]||eq.tipo}</div></div>
       <div class="tl-urgency" style="background:${ubg};color:${uc};border:1px solid ${uc}">${u}</div>
     </div>`;
   }).join('') || '<div style="font-size:11px;color:var(--muted);padding:10px 0">Sin equipos registrados</div>';
@@ -997,11 +1001,11 @@ function renderEquipos(){
     return`<div class="equipo-row ${st}">
       <div style="font-size:20px;flex-shrink:0">${TIPO_ICONS[eq.tipo]||'💻'}</div>
       <div class="equipo-info">
-        <div class="equipo-name">${eq.nombre}</div>
-        <div class="equipo-detail">${eq.modelo||''}${eq.serie?` · SN: ${eq.serie}`:''}</div>
+        <div class="equipo-name">${escapeHtml(eq.nombre)}</div>
+        <div class="equipo-detail">${escapeHtml(eq.modelo||'')}${eq.serie?` · SN: ${escapeHtml(eq.serie)}`:''}</div>
         <div class="equipo-badges">
           <span class="badge badge-${st==='ok'?'ok':st==='warning'?'warn':'crit'}">${st==='ok'?'Operativo':st==='warning'?'Atención':'Crítico'}</span>
-          ${eq.ip?`<span class="badge badge-info">${eq.ip}</span>`:''}
+          ${eq.ip?`<span class="badge badge-info">${escapeHtml(eq.ip)}</span>`:''}
           <span class="badge badge-gray">Próx: ${daysTxt}</span>
           ${hCount>0?`<span class="badge badge-info">${hCount} mantenimiento${hCount>1?'s':''}</span>`:''}
         </div>
@@ -1225,8 +1229,8 @@ function openHistModal(equipoId){
         <div class="hist-date">${fmtDate(r.fecha)} — ${r.tipo||'Mantenimiento'}</div>
         <span class="badge badge-${r.estado==='ok'?'ok':r.estado==='warning'?'warn':'crit'}">${r.estado==='ok'?'Operativo':r.estado==='warning'?'Atención':'Crítico'}</span>
       </div>
-      <div class="hist-tech">👤 ${r.tecnico}</div>
-      ${r.obs?`<div class="hist-notes">${r.obs}</div>`:''}
+      <div class="hist-tech">👤 ${escapeHtml(r.tecnico)}</div>
+      ${r.obs?`<div class="hist-notes">${escapeHtml(r.obs)}</div>`:''}
       ${r.proximoMaint?`<div style="font-size:9px;color:var(--ftd-blue);margin-top:4px;font-weight:600">Próx. mant programado: ${fmtDate(r.proximoMaint)}</div>`:''}
     </div>`).join('');
   closeModal('storeModal');
@@ -1241,7 +1245,7 @@ async function saveNewStore(){
   if(!num||!name){alert('# Tienda y Nombre son obligatorios');return;}
   const btn=document.getElementById('saveStoreBtn');
   btn.disabled=true;btn.textContent='Guardando...';
-  const store={storeNum:num,storeName:name,area:document.getElementById('st-area').value,ciudad:document.getElementById('st-ciudad').value.trim()};
+  const store={storeNum:num,storeName:name,area:'',ciudad:document.getElementById('st-ciudad').value.trim()};
   try {
     await apiPost({action:'saveStore',store});
     stores.push(store);
